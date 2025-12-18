@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lista nozze — Elisa & Christian</title>
+
+  <!-- Google Fonts (gratis). Se vuoi 100% offline, rimuovi questo blocco e usa solo i font di sistema. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #f4f0e6;           /* beige caldo */
+      --ink: #2c2a26;          /* testo */
+      --muted: #6a6255;        /* testo secondario */
+      --accent: #8b6b3f;       /* bottone */
+      --accent-ink: #fffaf2;
+      --card: rgba(255,255,255,0.25);
+      --radius: 18px;
+      --shadow: 0 10px 30px rgba(0,0,0,.10);
+      --max: 1080px;
+    }
+
+    *{ box-sizing: border-box; }
+    html, body{ height: 100%; }
+    body{
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.35;
+    }
+
+    .wrap{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 44px 18px 60px;
+    }
+
+    /* --- HERO (parte alta) --- */
+    .hero{
+      display: grid;
+      grid-template-columns: 1.05fr 1.95fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .hero__title{
+      padding-top: 10px;
+    }
+
+    .kicker{
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-weight: 700;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+      color: var(--ink);
+      font-size: 42px;
+      line-height: .95;
+      margin: 0 0 14px;
+    }
+
+    .kicker span{
+      display: block;
+    }
+
+    .names{
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-size: 16px;
+      margin: 0;
+    }
+
+    .hero__images{
+      display: grid;
+      grid-template-columns: 1.6fr .95fr;
+      gap: 14px;
+    }
+
+    .img{
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      background: #ddd;
+      min-height: 160px;
+    }
+
+    .img img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .img--main{ min-height: 380px; }
+
+    .stack{
+      display: grid;
+      grid-template-rows: 1fr 1fr;
+      gap: 14px;
+      min-height: 380px;
+    }
+
+    /* --- SEZIONE TESTO (parte bassa) --- */
+    .section{
+      margin-top: 44px;
+      display: grid;
+      grid-template-columns: 140px 1.4fr 1.2fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .avatar{
+      width: 120px;
+      height: 120px;
+      border-radius: 999px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      background: #ddd;
+      margin-top: 16px;
+    }
+
+    .avatar img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .quote{
+      padding-top: 14px;
+    }
+
+    .quote h2{
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-style: italic;
+      font-weight: 600;
+      font-size: 28px;
+      margin: 0 0 12px;
+      color: var(--accent);
+    }
+
+    .quote p{
+      margin: 0;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .ctaBox{
+      position: relative;
+      padding-top: 6px;
+    }
+
+    .img--cta{ min-height: 310px; }
+
+    .cta{
+      display: flex;
+      justify-content: center;
+      margin-top: 18px;
+    }
+
+    .btn{
+      appearance: none;
+      border: 0;
+      background: var(--accent);
+      color: var(--accent-ink);
+      font-family: Inter, system-ui, sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 10px 18px;
+      border-radius: 999px;
