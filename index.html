@@ -5,22 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Lista nozze — Elisa & Christian</title>
 
-  <!-- Google Fonts (gratis). Se vuoi 100% offline, rimuovi questo blocco e usa solo i font di sistema. -->
+  <!-- Font gratuiti (Google Fonts) – molto simili al PDF: sans geometrico + serif italic -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Playfair+Display:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --bg: #f4f0e6;           /* beige caldo */
-      --ink: #2c2a26;          /* testo */
-      --muted: #6a6255;        /* testo secondario */
-      --accent: #8b6b3f;       /* bottone */
-      --accent-ink: #fffaf2;
-      --card: rgba(255,255,255,0.25);
-      --radius: 18px;
-      --shadow: 0 10px 30px rgba(0,0,0,.10);
-      --max: 1080px;
+      --bg: #f3efe6;
+      --ink: #3a3326;
+      --gold: #8a6f2f;
+      --gold-2: #9b7f3a;
+      --shadow: 0 14px 34px rgba(0,0,0,.12);
+      --r: 18px;
+      --max: 1200px;
     }
 
     *{ box-sizing: border-box; }
@@ -29,203 +27,202 @@
       margin: 0;
       background: var(--bg);
       color: var(--ink);
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-      line-height: 1.35;
+      font-family: Montserrat, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.45;
     }
 
     .wrap{
       max-width: var(--max);
       margin: 0 auto;
-      padding: 44px 18px 60px;
+      padding: 40px 28px 64px;
     }
 
-    /* --- HERO (parte alta) --- */
-    .hero{
+    /* ======= TOP ======= */
+    .top{
       display: grid;
-      grid-template-columns: 1.05fr 1.95fr;
-      gap: 28px;
+      grid-template-columns: 420px 1fr;
+      gap: 34px;
+      align-items: end; /* titolo “appoggiato” in basso come nel PDF */
+    }
+
+    .titleBlock{
+      padding-bottom: 14px;
+    }
+
+    .title{
+      margin: 0 0 18px;
+      font-size: 60px;
+      line-height: .98;
+      letter-spacing: .02em;
+      color: var(--gold);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .title strong{ font-weight: 800; }
+
+    .names{
+      margin: 0;
+      color: var(--gold-2);
+      font-size: 18px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .images{
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 16px;
       align-items: start;
     }
 
-    .hero__title{
-      padding-top: 10px;
-    }
-
-    .kicker{
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-weight: 700;
-      letter-spacing: .02em;
-      text-transform: uppercase;
-      color: var(--ink);
-      font-size: 42px;
-      line-height: .95;
-      margin: 0 0 14px;
-    }
-
-    .kicker span{
-      display: block;
-    }
-
-    .names{
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-weight: 600;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      color: var(--muted);
-      font-size: 16px;
-      margin: 0;
-    }
-
-    .hero__images{
-      display: grid;
-      grid-template-columns: 1.6fr .95fr;
-      gap: 14px;
-    }
-
     .img{
-      border-radius: var(--radius);
+      border-radius: var(--r);
       overflow: hidden;
       box-shadow: var(--shadow);
       background: #ddd;
-      min-height: 160px;
     }
 
-    .img img{
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
+    .img img{ width:100%; height:100%; object-fit: cover; display:block; }
 
-    .img--main{ min-height: 380px; }
+    .img--main{ height: 420px; }
 
     .stack{
       display: grid;
+      gap: 16px;
+      height: 420px;
       grid-template-rows: 1fr 1fr;
-      gap: 14px;
-      min-height: 380px;
     }
 
-    /* --- SEZIONE TESTO (parte bassa) --- */
-    .section{
-      margin-top: 44px;
+    .stack .img{ height: 100%; }
+
+    /* ======= BOTTOM ======= */
+    .bottom{
       display: grid;
-      grid-template-columns: 140px 1.4fr 1.2fr;
-      gap: 22px;
+      grid-template-columns: 160px 1fr 520px;
+      gap: 26px;
+      margin-top: 56px;
       align-items: start;
     }
 
     .avatar{
-      width: 120px;
-      height: 120px;
+      width: 140px;
+      height: 140px;
       border-radius: 999px;
       overflow: hidden;
       box-shadow: var(--shadow);
-      background: #ddd;
-      margin-top: 16px;
+      background:#ddd;
+      margin-top: 6px;
     }
+    .avatar img{ width:100%; height:100%; object-fit: cover; display:block; }
 
-    .avatar img{
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
+    .copy{
+      padding-top: 2px;
     }
 
     .quote{
-      padding-top: 14px;
-    }
-
-    .quote h2{
-      font-family: "Cormorant Garamond", Georgia, serif;
+      margin: 10px 0 22px;
+      font-family: "Playfair Display", Georgia, serif;
       font-style: italic;
       font-weight: 600;
-      font-size: 28px;
-      margin: 0 0 12px;
-      color: var(--accent);
+      color: var(--gold);
+      font-size: 34px;
+      line-height: 1.1;
     }
 
-    .quote p{
+    .lead{
+      margin: 0 0 18px;
+      color: var(--gold);
+      font-size: 24px;
+      line-height: 1.35;
+      font-weight: 500;
+    }
+
+    .small{
       margin: 0;
-      color: var(--muted);
-      font-size: 18px;
+      color: var(--gold);
+      font-size: 14px;
+      opacity: .9;
+      max-width: 36ch;
     }
 
-    .ctaBox{
-      position: relative;
-      padding-top: 6px;
+    .side{
+      padding-top: 10px;
     }
 
-    .img--cta{ min-height: 310px; }
+    .img--side{ height: 300px; }
 
-    .cta{
+    .ctaRow{
+      grid-column: 2 / 3; /* centrato sotto il testo (non sotto la foto a destra) */
       display: flex;
       justify-content: center;
-      margin-top: 18px;
+      margin-top: 26px;
     }
 
     .btn{
       appearance: none;
       border: 0;
-      background: var(--accent);
-      color: var(--accent-ink);
-      font-family: Inter, system-ui, sans-serif;
-      font-weight: 600;
+      background: #9a833e;
+      color: #fff7e7;
+      font-family: Montserrat, system-ui, sans-serif;
+      font-weight: 700;
       font-size: 14px;
-      padding: 10px 18px;
+      padding: 12px 22px;
       border-radius: 999px;
-      text-decoration: none;
-      box-shadow: 0 10px 24px rgba(139,107,63,.25);
-      transform: translateY(0);
+      text-decoration: underline;
+      box-shadow: 0 14px 26px rgba(154,131,62,.28);
       transition: transform .15s ease, filter .15s ease;
+      cursor: pointer;
     }
 
     .btn:hover{ transform: translateY(-1px); filter: brightness(1.03); }
     .btn:active{ transform: translateY(0); }
 
-    /* --- responsive --- */
-    @media (max-width: 980px){
-      .hero{ grid-template-columns: 1fr; }
-      .hero__images{ grid-template-columns: 1fr; }
-      .stack{ grid-template-columns: 1fr 1fr; grid-template-rows: 1fr; min-height: auto; }
-      .img--main{ min-height: 320px; }
-      .section{ grid-template-columns: 120px 1fr; }
-      .ctaBox{ grid-column: 1 / -1; }
+    a:focus-visible{ outline: 3px solid rgba(154,131,62,.45); outline-offset: 4px; border-radius: 12px; }
+
+    /* ======= Responsive ======= */
+    @media (max-width: 1100px){
+      .top{ grid-template-columns: 1fr; align-items: start; }
+      .title{ font-size: 52px; }
+      .images{ grid-template-columns: 1fr; }
+      .img--main{ height: 360px; }
+      .stack{ height: auto; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr; }
+      .bottom{ grid-template-columns: 140px 1fr; }
+      .side{ grid-column: 1 / -1; }
+      .ctaRow{ grid-column: 1 / -1; }
     }
 
-    @media (max-width: 560px){
-      .kicker{ font-size: 34px; }
+    @media (max-width: 640px){
+      .wrap{ padding: 28px 18px 54px; }
+      .title{ font-size: 40px; }
+      .quote{ font-size: 28px; }
+      .lead{ font-size: 18px; }
+      .bottom{ grid-template-columns: 1fr; }
+      .avatar{ width: 120px; height: 120px; }
       .stack{ grid-template-columns: 1fr; }
-      .section{ grid-template-columns: 1fr; }
-      .avatar{ margin-top: 0; }
-      .quote h2{ font-size: 24px; }
-      .quote p{ font-size: 16px; }
     }
-
-    /* Accessibilità: focus visibile */
-    a:focus-visible{ outline: 3px solid rgba(139,107,63,.45); outline-offset: 4px; border-radius: 10px; }
   </style>
 </head>
 
 <body>
   <main class="wrap">
-    <!-- Parte alta -->
-    <section class="hero" aria-label="Introduzione lista nozze">
-      <div class="hero__title">
-        <h1 class="kicker">
-          <span>Questa non</span>
-          <span>è una <strong>lista</strong></span>
-          <span>regali</span>
+
+    <!-- TOP: titolo + collage immagini -->
+    <section class="top" aria-label="Introduzione lista nozze">
+      <div class="titleBlock">
+        <h1 class="title">
+          QUESTA NON<br>
+          È UNA <strong>LISTA</strong><br>
+          REGALI
         </h1>
-        <p class="names">Elisa &amp; Christian</p>
+        <p class="names">ELISA &amp; CHRISTIAN</p>
       </div>
 
-      <div class="hero__images" aria-label="Immagini (provvisorie)">
+      <div class="images" aria-label="Immagini (provvisorie)">
         <figure class="img img--main">
-          <!-- sostituisci con la tua immagine principale -->
-          <img src="images/hero-main.jpg" alt="Foto/illustrazione principale" />
+          <img src="images/hero-main.jpg" alt="Immagine principale" />
         </figure>
-
         <div class="stack">
           <figure class="img">
             <img src="images/hero-side-1.jpg" alt="Immagine laterale 1" />
@@ -237,33 +234,36 @@
       </div>
     </section>
 
-    <!-- Parte bassa -->
-    <section class="section" aria-label="Descrizione e call to action">
-      <div class="avatar" aria-label="Foto piccola (provvisoria)">
+    <!-- BOTTOM: avatar + testo + foto destra + bottone -->
+    <section class="bottom" aria-label="Descrizione e call to action">
+      <div class="avatar">
         <img src="images/avatar.jpg" alt="Foto di Elisa e Christian" />
       </div>
 
-      <div class="quote">
-        <h2>Non volevamo una classica lista regali</h2>
-        <p>
-          Qui troverete alcune esperienze che ci piacerebbe fare durante la luna di miele:
+      <div class="copy">
+        <div class="quote">Non volevamo una classica lista regali</div>
+
+        <p class="lead">
+          Qui troverete alcune esperienze che ci piacerebbe fare durante la luna di miele:<br>
           cene, momenti speciali, piccole avventure.
-          <br><br>
+        </p>
+
+        <p class="small">
           Se vi va, potete sceglierne una e regalarci un ricordo che porteremo con noi per sempre.
         </p>
-      </div>
 
-      <div class="ctaBox">
-        <figure class="img img--cta">
-          <img src="images/cta.jpg" alt="Immagine di coppia (provvisoria)" />
-        </figure>
-
-        <!-- Pulsante: porta alla pagina con elenco esperienze/attività -->
-        <div class="cta">
+        <div class="ctaRow">
           <a class="btn" href="esperienze.html">Scegli un’esperienza</a>
         </div>
       </div>
+
+      <div class="side">
+        <figure class="img img--side">
+          <img src="images/cta.jpg" alt="Immagine di coppia" />
+        </figure>
+      </div>
     </section>
+
   </main>
 </body>
 </html>
