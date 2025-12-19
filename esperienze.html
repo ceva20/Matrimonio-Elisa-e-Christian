@@ -1,11 +1,370 @@
 <!doctype html>
 <html lang="it">
 <head>
-  <meta charset="utf-8">
-  <title>Esperienze — Elisa & Christian</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Esperienze — Lista nozze</title>
+
+  <!-- Stessa coppia font della homepage -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #f3efe6;
+      --ink: #3a3326;
+      --gold: #8a6f2f;
+      --gold-2: #9b7f3a;
+      --red: #a5483a;
+      --blue: #2c5c83;
+      --shadow: 0 14px 34px rgba(0,0,0,.12);
+      --r: 18px;
+      --max: 1200px;
+    }
+
+    *{ box-sizing: border-box; }
+    html, body{ height: 100%; }
+    body{
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Montserrat, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.45;
+    }
+
+    .wrap{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 34px 28px 70px;
+    }
+
+    /* Header semplice: titolo + breadcrumb */
+    .topbar{
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+
+    .crumb a{
+      color: var(--gold);
+      text-decoration: none;
+      font-weight: 600;
+      letter-spacing: .02em;
+    }
+    .crumb a:hover{ text-decoration: underline; }
+
+    .pageTitle{
+      margin: 0;
+      color: var(--gold);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-size: 14px;
+    }
+
+    /* Sezioni categoria */
+    .section{
+      margin-top: 16px;
+    }
+
+    .sectionLabel{
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      font-weight: 700;
+      font-size: 12px;
+      margin: 6px 0 16px;
+    }
+
+    /* Grid cards come nel template PDF: 3 colonne */
+    .grid{
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 34px 28px;
+    }
+
+    .card{
+      display: grid;
+      grid-template-rows: auto auto auto 1fr;
+    }
+
+    .head{
+      display: grid;
+      grid-template-columns: 54px 1fr;
+      gap: 12px;
+      align-items: end;
+      margin-bottom: 10px;
+    }
+
+    .num{
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 34px;
+      line-height: 1;
+      letter-spacing: .02em;
+    }
+
+    .name{
+      margin: 0;
+      font-weight: 600;
+      font-size: 22px;
+      color: var(--ink);
+    }
+
+    .photo{
+      border-radius: 0; /* nel PDF è squadrata */
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      background: #ddd;
+      height: 255px;
+    }
+    .photo img{ width: 100%; height: 100%; object-fit: cover; display:block; }
+
+    .meta{
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      margin: 10px 0 8px;
+      font-weight: 700;
+    }
+
+    .remaining{
+      color: var(--red);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .price{
+      color: var(--blue);
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .desc{
+      margin: 0;
+      font-size: 12px;
+      color: rgba(58,51,38,.75);
+      max-width: 52ch;
+    }
+
+    /* CTA (opzionale) sotto ogni card: per futura logica "regala" */
+    .actions{
+      margin-top: 12px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn{
+      appearance: none;
+      border: 0;
+      background: #9a833e;
+      color: #fff7e7;
+      font-family: Montserrat, system-ui, sans-serif;
+      font-weight: 800;
+      font-size: 12px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 14px 26px rgba(154,131,62,.22);
+      transition: transform .15s ease, filter .15s ease;
+      white-space: nowrap;
+    }
+    .btn:hover{ transform: translateY(-1px); filter: brightness(1.03); }
+
+    .ghost{
+      background: transparent;
+      color: var(--gold);
+      box-shadow: none;
+      border: 1px solid rgba(154,131,62,.55);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    a:focus-visible, button:focus-visible{ outline: 3px solid rgba(154,131,62,.45); outline-offset: 4px; border-radius: 12px; }
+
+    /* Responsive */
+    @media (max-width: 1040px){
+      .grid{ grid-template-columns: repeat(2, 1fr); }
+      .photo{ height: 260px; }
+    }
+
+    @media (max-width: 640px){
+      .wrap{ padding: 24px 18px 60px; }
+      .grid{ grid-template-columns: 1fr; gap: 26px; }
+      .head{ grid-template-columns: 48px 1fr; }
+      .num{ font-size: 30px; }
+      .name{ font-size: 20px; }
+      .photo{ height: 240px; }
+    }
+  </style>
 </head>
+
 <body>
-  <h1>Esperienze e attività</h1>
-  <p>Pagina in costruzione 💛</p>
+  <main class="wrap">
+    <header class="topbar">
+      <div class="crumb">
+        <a href="index.html">← Torna alla lista nozze</a>
+      </div>
+      <p class="pageTitle">Esperienze &amp; attività</p>
+    </header>
+
+    <!-- TEMPLATE: Sezione "VIAGGIO" (come nel PDF) -->
+    <section class="section" aria-label="Categoria viaggio">
+      <div class="sectionLabel">VIAGGIO</div>
+
+      <div class="grid">
+        <!-- Card 01 -->
+        <article class="card">
+          <div class="head">
+            <div class="num">01</div>
+            <h3 class="name">Volo di andata</h3>
+          </div>
+
+          <div class="photo">
+            <img src="images/exp-01.jpg" alt="Immagine esperienza 01" />
+          </div>
+
+          <div class="meta">
+            <div class="remaining">Ancora 2 rimanenti</div>
+            <div class="price">500€</div>
+          </div>
+
+          <p class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam dolor mi, pellentesque id molestie nec, mollis at lectus.</p>
+
+          <!-- Opzionale (gratis): lasciamo pronto per la fase “e-commerce” -->
+          <div class="actions">
+            <a class="btn" href="#" aria-label="Regala Volo di andata (placeholder)">Regala</a>
+            <a class="btn ghost" href="#" aria-label="Dettagli Volo di andata (placeholder)">Dettagli</a>
+          </div>
+        </article>
+
+        <!-- Card 02 -->
+        <article class="card">
+          <div class="head">
+            <div class="num">02</div>
+            <h3 class="name">Volo di ritorno</h3>
+          </div>
+
+          <div class="photo">
+            <img src="images/exp-02.jpg" alt="Immagine esperienza 02" />
+          </div>
+
+          <div class="meta">
+            <div class="remaining">Ancora 2 rimanenti</div>
+            <div class="price">500€</div>
+          </div>
+
+          <p class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam dolor mi, pellentesque id molestie nec, mollis at lectus.</p>
+
+          <div class="actions">
+            <a class="btn" href="#" aria-label="Regala Volo di ritorno (placeholder)">Regala</a>
+            <a class="btn ghost" href="#" aria-label="Dettagli Volo di ritorno (placeholder)">Dettagli</a>
+          </div>
+        </article>
+
+        <!-- Card 03 -->
+        <article class="card">
+          <div class="head">
+            <div class="num">03</div>
+            <h3 class="name">Volo interno</h3>
+          </div>
+
+          <div class="photo">
+            <img src="images/exp-03.jpg" alt="Immagine esperienza 03" />
+          </div>
+
+          <div class="meta">
+            <div class="remaining">Ancora 4 rimanenti</div>
+            <div class="price">150€</div>
+          </div>
+
+          <p class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam dolor mi, pellentesque id molestie nec, mollis at lectus.</p>
+
+          <div class="actions">
+            <a class="btn" href="#" aria-label="Regala Volo interno (placeholder)">Regala</a>
+            <a class="btn ghost" href="#" aria-label="Dettagli Volo interno (placeholder)">Dettagli</a>
+          </div>
+        </article>
+
+        <!-- Card 04 -->
+        <article class="card">
+          <div class="head">
+            <div class="num">04</div>
+            <h3 class="name">Notte in crociera</h3>
+          </div>
+
+          <div class="photo">
+            <img src="images/exp-04.jpg" alt="Immagine esperienza 04" />
+          </div>
+
+          <div class="meta">
+            <div class="remaining">Ancora 7 rimanenti</div>
+            <div class="price">145€</div>
+          </div>
+
+          <p class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam dolor mi, pellentesque id molestie nec, mollis at lectus.</p>
+
+          <div class="actions">
+            <a class="btn" href="#" aria-label="Regala Notte in crociera (placeholder)">Regala</a>
+            <a class="btn ghost" href="#" aria-label="Dettagli Notte in crociera (placeholder)">Dettagli</a>
+          </div>
+        </article>
+
+        <!-- Card 05 -->
+        <article class="card">
+          <div class="head">
+            <div class="num">05</div>
+            <h3 class="name">Notte in hotel</h3>
+          </div>
+
+          <div class="photo">
+            <img src="images/exp-05.jpg" alt="Immagine esperienza 05" />
+          </div>
+
+          <div class="meta">
+            <div class="remaining">Ancora 9 rimanenti</div>
+            <div class="price">280€</div>
+          </div>
+
+          <p class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam dolor mi, pellentesque id molestie nec, mollis at lectus.</p>
+
+          <div class="actions">
+            <a class="btn" href="#" aria-label="Regala Notte in hotel (placeholder)">Regala</a>
+            <a class="btn ghost" href="#" aria-label="Dettagli Notte in hotel (placeholder)">Dettagli</a>
+          </div>
+        </article>
+
+        <!-- Card 06 -->
+        <article class="card">
+          <div class="head">
+            <div class="num">06</div>
+            <h3 class="name">Volo interno</h3>
+          </div>
+
+          <div class="photo">
+            <img src="images/exp-06.jpg" alt="Immagine esperienza 06" />
+          </div>
+
+          <div class="meta">
+            <div class="remaining">Ancora 4 rimanenti</div>
+            <div class="price">150€</div>
+          </div>
+
+          <p class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam dolor mi, pellentesque id molestie nec, mollis at lectus.</p>
+
+          <div class="actions">
+            <a class="btn" href="#" aria-label="Regala Volo interno (placeholder)">Regala</a>
+            <a class="btn ghost" href="#" aria-label="Dettagli Volo interno (placeholder)">Dettagli</a>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
 </body>
 </html>
