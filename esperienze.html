@@ -219,152 +219,52 @@
       <div class="sectionLabel">VIAGGIO</div>
 
       <div class="grid">
-        <!-- Card 01 -->
-        <article class="card">
-          <div class="head">
-            <div class="num">01</div>
-            <h3 class="name">Volo di andata</h3>
-          </div>
-
-          <div class="photo">
-            <img src="images/exp-01.jpg" alt="Immagine esperienza 01" />
-          </div>
-
-          <div class="meta">
-            <div class="remaining">Ancora 2 rimanenti</div>
-            <div class="price">500€</div>
-          </div>
-
-          <p class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam dolor mi, pellentesque id molestie nec, mollis at lectus.</p>
-
-          <!-- Opzionale (gratis): lasciamo pronto per la fase “e-commerce” -->
-          <div class="actions">
-            <a class="btn" href="#" aria-label="Regala Volo di andata (placeholder)">Regala</a>
-            <a class="btn ghost" href="#" aria-label="Dettagli Volo di andata (placeholder)">Dettagli</a>
-          </div>
-        </article>
-
-        <!-- Card 02 -->
-        <article class="card">
-          <div class="head">
-            <div class="num">02</div>
-            <h3 class="name">Volo di ritorno</h3>
-          </div>
-
-          <div class="photo">
-            <img src="images/exp-02.jpg" alt="Immagine esperienza 02" />
-          </div>
-
-          <div class="meta">
-            <div class="remaining">Ancora 2 rimanenti</div>
-            <div class="price">500€</div>
-          </div>
-
-          <p class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam dolor mi, pellentesque id molestie nec, mollis at lectus.</p>
-
-          <div class="actions">
-            <a class="btn" href="#" aria-label="Regala Volo di ritorno (placeholder)">Regala</a>
-            <a class="btn ghost" href="#" aria-label="Dettagli Volo di ritorno (placeholder)">Dettagli</a>
-          </div>
-        </article>
-
-        <!-- Card 03 -->
-        <article class="card">
-          <div class="head">
-            <div class="num">03</div>
-            <h3 class="name">Volo interno</h3>
-          </div>
-
-          <div class="photo">
-            <img src="images/exp-03.jpg" alt="Immagine esperienza 03" />
-          </div>
-
-          <div class="meta">
-            <div class="remaining">Ancora 4 rimanenti</div>
-            <div class="price">150€</div>
-          </div>
-
-          <p class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam dolor mi, pellentesque id molestie nec, mollis at lectus.</p>
-
-          <div class="actions">
-            <a class="btn" href="#" aria-label="Regala Volo interno (placeholder)">Regala</a>
-            <a class="btn ghost" href="#" aria-label="Dettagli Volo interno (placeholder)">Dettagli</a>
-          </div>
-        </article>
-
-        <!-- Card 04 -->
-        <article class="card">
-          <div class="head">
-            <div class="num">04</div>
-            <h3 class="name">Notte in crociera</h3>
-          </div>
-
-          <div class="photo">
-            <img src="images/exp-04.jpg" alt="Immagine esperienza 04" />
-          </div>
-
-          <div class="meta">
-            <div class="remaining">Ancora 7 rimanenti</div>
-            <div class="price">145€</div>
-          </div>
-
-          <p class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam dolor mi, pellentesque id molestie nec, mollis at lectus.</p>
-
-          <div class="actions">
-            <a class="btn" href="#" aria-label="Regala Notte in crociera (placeholder)">Regala</a>
-            <a class="btn ghost" href="#" aria-label="Dettagli Notte in crociera (placeholder)">Dettagli</a>
-          </div>
-        </article>
-
-        <!-- Card 05 -->
-        <article class="card">
-          <div class="head">
-            <div class="num">05</div>
-            <h3 class="name">Notte in hotel</h3>
-          </div>
-
-          <div class="photo">
-            <img src="images/exp-05.jpg" alt="Immagine esperienza 05" />
-          </div>
-
-          <div class="meta">
-            <div class="remaining">Ancora 9 rimanenti</div>
-            <div class="price">280€</div>
-          </div>
-
-          <p class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam dolor mi, pellentesque id molestie nec, mollis at lectus.</p>
-
-          <div class="actions">
-            <a class="btn" href="#" aria-label="Regala Notte in hotel (placeholder)">Regala</a>
-            <a class="btn ghost" href="#" aria-label="Dettagli Notte in hotel (placeholder)">Dettagli</a>
-          </div>
-        </article>
-
-        <!-- Card 06 -->
-        <article class="card">
-          <div class="head">
-            <div class="num">06</div>
-            <h3 class="name">Volo interno</h3>
-          </div>
-
-          <div class="photo">
-            <img src="images/exp-06.jpg" alt="Immagine esperienza 06" />
-          </div>
-
-          <div class="meta">
-            <div class="remaining">Ancora 4 rimanenti</div>
-            <div class="price">150€</div>
-          </div>
-
-          <p class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam dolor mi, pellentesque id molestie nec, mollis at lectus.</p>
-
-          <div class="actions">
-            <a class="btn" href="#" aria-label="Regala Volo interno (placeholder)">Regala</a>
-            <a class="btn ghost" href="#" aria-label="Dettagli Volo interno (placeholder)">Dettagli</a>
-          </div>
-        </article>
       </div>
     </section>
   </main>
+  <script>
+const API_URL = "https://script.google.com/macros/s/AKfycbyNKgNoHHorGhNSRcawgmEP_3uARf5BS82EniV3mHOSAMIDbOSQswcOhuEi52doQjg0kA/exec"; // senza ?action=...
+
+const grid = document.getElementById("grid");
+
+fetch(API_URL + "?action=catalog")
+  .then(res => res.json())
+  .then(data => {
+    if (!data.ok) {
+      grid.innerHTML = "<p>Errore nel caricamento delle esperienze.</p>";
+      return;
+    }
+
+    grid.innerHTML = data.items.map(item => `
+      <article class="card">
+        <div class="head">
+          <div class="num">${item.id}</div>
+          <h3 class="name">${item.nome}</h3>
+        </div>
+
+        <div class="photo">
+          <img src="${item.img_url}" alt="${item.nome}">
+        </div>
+
+        <div class="meta">
+          <div class="remaining">
+            Ancora ${item.qty_disponibile} rimanenti
+          </div>
+          <div class="price">${item.prezzo_eur}€</div>
+        </div>
+
+        <p class="desc">${item.descrizione || ""}</p>
+
+        <div class="actions">
+          <button class="btn" disabled>Aggiungi al carrello</button>
+        </div>
+      </article>
+    `).join("");
+  })
+  .catch(() => {
+    grid.innerHTML = "<p>Errore di connessione.</p>";
+  });
+</script>
+
 </body>
 </html>
