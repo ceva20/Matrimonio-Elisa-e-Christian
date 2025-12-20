@@ -39,13 +39,20 @@
       padding: 34px 28px 70px;
     }
 
-    /* Header semplice: titolo + breadcrumb */
+    /* Header: breadcrumb + titolo + carrello */
     .topbar{
       display: flex;
-      align-items: baseline;
+      align-items: center;
       justify-content: space-between;
       gap: 16px;
       margin-bottom: 26px;
+    }
+
+    .left{
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 220px;
     }
 
     .crumb a{
@@ -65,10 +72,40 @@
       font-size: 14px;
     }
 
-    /* Sezioni categoria */
-    .section{
-      margin-top: 16px;
+    .cartBtn{
+      appearance: none;
+      border: 1px solid rgba(138,111,47,.45);
+      background: rgba(255,255,255,.35);
+      color: var(--gold);
+      font-family: Montserrat, system-ui, sans-serif;
+      font-weight: 800;
+      font-size: 12px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 20px rgba(0,0,0,.06);
     }
+
+    .badge{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      height: 22px;
+      padding: 0 7px;
+      border-radius: 999px;
+      background: #9a833e;
+      color: #fff7e7;
+      font-size: 12px;
+      line-height: 1;
+      font-weight: 800;
+    }
+
+    /* Sezioni categoria */
+    .section{ margin-top: 16px; }
 
     .sectionLabel{
       color: var(--gold);
@@ -79,17 +116,14 @@
       margin: 6px 0 16px;
     }
 
-    /* Grid cards come nel template PDF: 3 colonne */
+    /* Grid cards: 3 colonne */
     .grid{
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 34px 28px;
     }
 
-    .card{
-      display: grid;
-      grid-template-rows: auto auto auto 1fr;
-    }
+    .card{ display: grid; grid-template-rows: auto auto auto 1fr; }
 
     .head{
       display: grid;
@@ -107,15 +141,10 @@
       letter-spacing: .02em;
     }
 
-    .name{
-      margin: 0;
-      font-weight: 600;
-      font-size: 22px;
-      color: var(--ink);
-    }
+    .name{ margin: 0; font-weight: 600; font-size: 22px; color: var(--ink); }
 
     .photo{
-      border-radius: 0; /* nel PDF è squadrata */
+      border-radius: 0;
       overflow: hidden;
       box-shadow: var(--shadow);
       background: #ddd;
@@ -132,32 +161,12 @@
       font-weight: 700;
     }
 
-    .remaining{
-      color: var(--red);
-      font-size: 14px;
-      font-weight: 700;
-    }
+    .remaining{ color: var(--red); font-size: 14px; font-weight: 700; }
+    .price{ color: var(--blue); font-size: 16px; font-weight: 800; }
 
-    .price{
-      color: var(--blue);
-      font-size: 16px;
-      font-weight: 800;
-    }
+    .desc{ margin: 0; font-size: 12px; color: rgba(58,51,38,.75); max-width: 52ch; }
 
-    .desc{
-      margin: 0;
-      font-size: 12px;
-      color: rgba(58,51,38,.75);
-      max-width: 52ch;
-    }
-
-    /* CTA (opzionale) sotto ogni card: per futura logica "regala" */
-    .actions{
-      margin-top: 12px;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
+    .actions{ margin-top: 12px; display: flex; gap: 10px; align-items: center; }
 
     .btn{
       appearance: none;
@@ -177,16 +186,189 @@
     }
     .btn:hover{ transform: translateY(-1px); filter: brightness(1.03); }
 
-    .ghost{
-      background: transparent;
-      color: var(--gold);
+    .btn[disabled]{
+      opacity: .55;
+      cursor: not-allowed;
+      transform: none !important;
+      filter: none !important;
       box-shadow: none;
-      border: 1px solid rgba(154,131,62,.55);
-      font-weight: 700;
-      text-decoration: none;
     }
 
-    a:focus-visible, button:focus-visible{ outline: 3px solid rgba(154,131,62,.45); outline-offset: 4px; border-radius: 12px; }
+    /* ===== MODAL CARRELLO ===== */
+    .overlay{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.35);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 50;
+    }
+
+    .overlay.open{ display: flex; }
+
+    .modal{
+      width: min(860px, 100%);
+      background: rgba(255,255,255,.88);
+      border: 1px solid rgba(138,111,47,.25);
+      border-radius: 22px;
+      box-shadow: 0 22px 60px rgba(0,0,0,.22);
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+    }
+
+    .modalHeader{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 18px;
+      border-bottom: 1px solid rgba(138,111,47,.18);
+    }
+
+    .modalTitle{
+      margin: 0;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-weight: 800;
+      font-size: 12px;
+    }
+
+    .closeBtn{
+      appearance: none;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      color: var(--gold);
+      font-weight: 800;
+      font-size: 14px;
+      padding: 8px 10px;
+      border-radius: 12px;
+    }
+    .closeBtn:hover{ background: rgba(154,131,62,.10); }
+
+    .modalBody{ padding: 16px 18px 18px; }
+
+    .empty{
+      color: rgba(58,51,38,.75);
+      font-size: 14px;
+      margin: 0;
+    }
+
+    .cartList{ display: grid; gap: 12px; margin-top: 10px; }
+
+    .cartRow{
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(243,239,230,.7);
+      border: 1px solid rgba(138,111,47,.15);
+    }
+
+    .cartRow h4{ margin: 0 0 6px; font-size: 14px; font-weight: 800; color: var(--ink); }
+    .cartRow .sub{ margin: 0; font-size: 12px; color: rgba(58,51,38,.75); }
+
+    .qtyControls{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      justify-self: end;
+    }
+
+    .miniBtn{
+      appearance: none;
+      border: 1px solid rgba(138,111,47,.35);
+      background: rgba(255,255,255,.55);
+      color: var(--gold);
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .miniBtn:hover{ background: rgba(154,131,62,.10); }
+
+    .qty{
+      min-width: 26px;
+      text-align: center;
+      font-weight: 900;
+      color: var(--ink);
+    }
+
+    .modalFooter{
+      padding: 14px 18px 18px;
+      border-top: 1px solid rgba(138,111,47,.18);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .total{
+      font-weight: 900;
+      color: var(--ink);
+      font-size: 14px;
+    }
+
+    .checkoutBtn{ font-size: 12px; padding: 10px 16px; }
+
+    /* Checkout view */
+    .checkout{
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.72);
+      border: 1px solid rgba(138,111,47,.18);
+      display: none;
+    }
+
+    .checkout.open{ display: block; }
+
+    .fieldRow{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .field label{ display:block; font-size: 11px; letter-spacing:.06em; text-transform:uppercase; color: rgba(58,51,38,.75); font-weight: 800; margin-bottom: 6px; }
+    .field input{
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(138,111,47,.25);
+      background: rgba(255,255,255,.9);
+      font-family: Montserrat, system-ui, sans-serif;
+      font-size: 13px;
+    }
+
+    .ibanBox{
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(243,239,230,.75);
+      border: 1px solid rgba(138,111,47,.15);
+      font-size: 13px;
+      color: rgba(58,51,38,.9);
+    }
+
+    .code{
+      font-weight: 900;
+      letter-spacing: .06em;
+      color: var(--ink);
+    }
+
+    .twoBtns{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
 
     /* Responsive */
     @media (max-width: 1040px){
@@ -201,69 +383,410 @@
       .num{ font-size: 30px; }
       .name{ font-size: 20px; }
       .photo{ height: 240px; }
+      .fieldRow{ grid-template-columns: 1fr; }
     }
+
+    a:focus-visible, button:focus-visible{ outline: 3px solid rgba(154,131,62,.45); outline-offset: 4px; border-radius: 12px; }
   </style>
 </head>
 
 <body>
   <main class="wrap">
     <header class="topbar">
-      <div class="crumb">
-        <a href="index.html">← Torna alla lista nozze</a>
+      <div class="left">
+        <div class="crumb"><a href="index.html">← Torna alla lista nozze</a></div>
       </div>
       <p class="pageTitle">Esperienze &amp; attività</p>
+      <button class="cartBtn" id="openCart" type="button" aria-label="Apri carrello">
+        🛒 Carrello <span class="badge" id="cartCount">0</span>
+      </button>
     </header>
 
-    <!-- TEMPLATE: Sezione "VIAGGIO" (come nel PDF) -->
     <section class="section" aria-label="Categoria viaggio">
-      <div class="sectionLabel">VIAGGIO</div>
-
+      <div class="sectionLabel" id="categoryLabel">VIAGGIO</div>
       <div class="grid" id="grid"></div>
     </section>
   </main>
+
+  <!-- MODAL CARRELLO / CHECKOUT -->
+  <div class="overlay" id="overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Carrello">
+      <div class="modalHeader">
+        <p class="modalTitle">Carrello</p>
+        <button class="closeBtn" id="closeCart" type="button">Chiudi ✕</button>
+      </div>
+      <div class="modalBody">
+        <p class="empty" id="emptyMsg">Il carrello è vuoto.</p>
+        <div class="cartList" id="cartList"></div>
+
+        <div class="checkout" id="checkoutBox">
+          <p class="modalTitle" style="margin:0 0 10px;">Checkout</p>
+          <div class="fieldRow">
+            <div class="field">
+              <label for="custName">Nome</label>
+              <input id="custName" type="text" placeholder="Nome e cognome" />
+            </div>
+            <div class="field">
+              <label for="custEmail">Email</label>
+              <input id="custEmail" type="email" placeholder="nome@email.it" />
+            </div>
+          </div>
+
+          <div class="ibanBox" id="paymentBox" style="display:none;"></div>
+
+          <div class="twoBtns">
+            <button class="btn checkoutBtn" id="confirmCheckout" type="button">Procedi al pagamento</button>
+            <button class="btn" id="backToCart" type="button" style="background:transparent;color:var(--gold);border:1px solid rgba(154,131,62,.55);box-shadow:none;font-weight:800;">Torna al carrello</button>
+          </div>
+        </div>
+      </div>
+      <div class="modalFooter">
+        <div class="total" id="total">Totale: 0€</div>
+        <button class="btn checkoutBtn" id="goCheckout" type="button" disabled>Vai al checkout</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbyNKgNoHHorGhNSRcawgmEP_3uARf5BS82EniV3mHOSAMIDbOSQswcOhuEi52doQjg0kA/exec"; // senza ?action=...
+    // ===== CONFIG =====
+    const API_URL = "https://script.google.com/macros/s/AKfycbyNKgNoHHorGhNSRcawgmEP_3uARf5BS82EniV3mHOSAMIDbOSQswcOhuEi52doQjg0kA/exec"; // es: https://script.google.com/macros/s/XXXXX/exec
 
-const grid = document.getElementById("grid");
+    // Coordinate bonifico (metti quelle vere quando vuoi)
+    const PAY = {
+  intestatario: "Christian Evangelista",
+  iban: "IT40P0306939481100000002400",
+  banca: "Intesa San Paolo s.p.a",
+  note: "Inserisci la causale ESATTAMENTE come indicato."
+};
 
-fetch(API_URL + "?action=catalog")
-  .then(res => res.json())
-  .then(data => {
-    if (!data.ok) {
-      grid.innerHTML = "<p>Errore nel caricamento delle esperienze.</p>";
-      return;
+
+    // ===== DOM =====
+    const grid = document.getElementById("grid");
+    const categoryLabel = document.getElementById("categoryLabel");
+
+    const openCartBtn = document.getElementById("openCart");
+    const closeCartBtn = document.getElementById("closeCart");
+    const overlay = document.getElementById("overlay");
+
+    const cartCount = document.getElementById("cartCount");
+    const cartList = document.getElementById("cartList");
+    const emptyMsg = document.getElementById("emptyMsg");
+    const totalEl = document.getElementById("total");
+
+    const goCheckoutBtn = document.getElementById("goCheckout");
+    const checkoutBox = document.getElementById("checkoutBox");
+    const confirmCheckoutBtn = document.getElementById("confirmCheckout");
+    const backToCartBtn = document.getElementById("backToCart");
+
+    const custName = document.getElementById("custName");
+    const custEmail = document.getElementById("custEmail");
+    const paymentBox = document.getElementById("paymentBox");
+
+    // ===== STATE =====
+    const LS_KEY = "listaNozze_cart_v1";
+    let catalog = []; // array
+    let catalogMap = new Map(); // id -> item
+
+    // cart: { [itemId]: qty }
+    let cart = loadCart();
+
+    // ===== INIT =====
+    updateCartBadge();
+
+    fetch(API_URL + "?action=catalog")
+      .then(res => res.json())
+      .then(data => {
+        if (!data.ok) throw new Error("Catalog not ok");
+        catalog = data.items || [];
+        catalogMap = new Map(catalog.map(i => [String(i.id), i]));
+
+        // (Optional) se tutto è "VIAGGIO" lasciamo così. In futuro potremo raggruppare per categoria.
+        if (catalog[0] && catalog[0].categoria) categoryLabel.textContent = String(catalog[0].categoria).toUpperCase();
+
+        renderCatalog();
+      })
+      .catch(err => {
+        grid.innerHTML = `<p style="color:rgba(58,51,38,.75)">Errore nel caricamento delle esperienze. (${escapeHtml(String(err))})</p>`;
+      });
+
+    // ===== UI EVENTS =====
+    openCartBtn.addEventListener("click", () => openCart());
+    closeCartBtn.addEventListener("click", () => closeCart());
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) closeCart();
+    });
+
+    goCheckoutBtn.addEventListener("click", () => {
+      if (getCartCount() === 0) return;
+      checkoutBox.classList.add("open");
+      paymentBox.style.display = "none";
+      paymentBox.innerHTML = "";
+    });
+
+    backToCartBtn.addEventListener("click", () => {
+      checkoutBox.classList.remove("open");
+      paymentBox.style.display = "none";
+      paymentBox.innerHTML = "";
+    });
+
+    confirmCheckoutBtn.addEventListener("click", async () => {
+      // crea ordine (HOLD) su backend
+      if (getCartCount() === 0) return;
+
+      confirmCheckoutBtn.disabled = true;
+      confirmCheckoutBtn.textContent = "Sto generando il checkout…";
+
+      try {
+        const payload = {
+          customer: {
+            nome: custName.value || "",
+            email: custEmail.value || ""
+          },
+          cart: Object.entries(cart).map(([item_id, qty]) => ({ item_id, qty }))
+        };
+
+        const res = await fetch(API_URL + "?action=checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.error || "Checkout failed");
+
+        const order = data.order;
+        const total = Number(order.total_eur || 0);
+        const code = String(order.causale_code || "");
+
+        paymentBox.style.display = "block";
+        paymentBox.innerHTML = `
+          <div style="font-weight:900; margin-bottom:8px;">Totale: ${formatEUR(total)}</div>
+          <div><strong>Intestatario:</strong> ${escapeHtml(PAY.intestatario)}</div>
+          <div><strong>IBAN:</strong> <span class="code">${escapeHtml(PAY.iban)}</span></div>
+          <div><strong>Banca:</strong> ${escapeHtml(PAY.banca)}</div>
+          <div style="margin-top:10px;"><strong>Causale:</strong> <span class="code">${escapeHtml(code)}</span></div>
+          <div style="margin-top:8px; font-size:12px; color:rgba(58,51,38,.8)">${escapeHtml(PAY.note)}</div>
+          <div style="margin-top:10px; font-size:12px; color:rgba(58,51,38,.75)">Ordine: <span class="code">${escapeHtml(order.order_id)}</span> (prenotazione valida fino a ${formatDate(order.hold_expires_at)})</div>
+        `;
+
+        // IMPORTANT: svuotiamo il carrello lato client (per evitare doppi invii) 
+        // L'inventario è già "in hold" sul backend.
+        cart = {};
+        saveCart();
+        updateCartBadge();
+        renderCart();
+        renderCatalog();
+
+        goCheckoutBtn.disabled = true;
+      } catch (err) {
+        alert("Errore checkout: " + String(err));
+      } finally {
+        confirmCheckoutBtn.disabled = false;
+        confirmCheckoutBtn.textContent = "Procedi al pagamento";
+      }
+    });
+
+    // ===== RENDER =====
+    function renderCatalog(){
+      if (!catalog || catalog.length === 0) {
+        grid.innerHTML = `<p style="color:rgba(58,51,38,.75)">Nessuna esperienza disponibile al momento.</p>`;
+        return;
+      }
+
+      grid.innerHTML = catalog.map(item => {
+        const id = String(item.id);
+        const available = Number(item.qty_disponibile || 0);
+        const inCart = Number(cart[id] || 0);
+        const canAdd = (inCart < available);
+
+        // Placeholder immagine se vuota
+        const img = (item.img_url && String(item.img_url).trim().length > 0) ? String(item.img_url) : "images/placeholder.jpg";
+
+        return `
+          <article class="card">
+            <div class="head">
+              <div class="num">${pad2(id)}</div>
+              <h3 class="name">${escapeHtml(String(item.nome || ""))}</h3>
+            </div>
+
+            <div class="photo">
+              <img src="${escapeHtml(img)}" alt="${escapeHtml(String(item.nome || ""))}" onerror="this.src='images/placeholder.jpg'" />
+            </div>
+
+            <div class="meta">
+              <div class="remaining">Ancora ${available} rimanenti</div>
+              <div class="price">${formatEUR(Number(item.prezzo_eur || 0))}</div>
+            </div>
+
+            <p class="desc">${escapeHtml(String(item.descrizione || ""))}</p>
+
+            <div class="actions">
+              <button class="btn" type="button" ${canAdd ? "" : "disabled"} data-add="${escapeHtml(id)}">
+                ${canAdd ? "Aggiungi al carrello" : "Esaurito"}
+              </button>
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      // bind add buttons
+      grid.querySelectorAll("button[data-add]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-add");
+          addToCart(id);
+        });
+      });
     }
 
-    grid.innerHTML = data.items.map(item => `
-      <article class="card">
-        <div class="head">
-          <div class="num">${item.id}</div>
-          <h3 class="name">${item.nome}</h3>
-        </div>
+    function openCart(){
+      overlay.classList.add("open");
+      overlay.setAttribute("aria-hidden", "false");
+      checkoutBox.classList.remove("open");
+      paymentBox.style.display = "none";
+      paymentBox.innerHTML = "";
+      renderCart();
+    }
 
-        <div class="photo">
-          <img src="${item.img_url}" alt="${item.nome}">
-        </div>
+    function closeCart(){
+      overlay.classList.remove("open");
+      overlay.setAttribute("aria-hidden", "true");
+    }
 
-        <div class="meta">
-          <div class="remaining">
-            Ancora ${item.qty_disponibile} rimanenti
+    function renderCart(){
+      const entries = Object.entries(cart);
+      const count = getCartCount();
+
+      emptyMsg.style.display = (count === 0) ? "block" : "none";
+      cartList.innerHTML = "";
+
+      let total = 0;
+
+      entries.forEach(([id, qty]) => {
+        const item = catalogMap.get(String(id));
+        const name = item ? String(item.nome || id) : id;
+        const price = item ? Number(item.prezzo_eur || 0) : 0;
+        const subtotal = price * Number(qty);
+        total += subtotal;
+
+        const available = item ? Number(item.qty_disponibile || 0) : 0;
+        // Nota: qty_disponibile è disponibilità attuale; qui è ok perché impediamo di superare quel valore.
+
+        const row = document.createElement("div");
+        row.className = "cartRow";
+        row.innerHTML = `
+          <div>
+            <h4>${escapeHtml(name)}</h4>
+            <p class="sub">${formatEUR(price)} × ${qty} — <strong>${formatEUR(subtotal)}</strong></p>
           </div>
-          <div class="price">${item.prezzo_eur}€</div>
-        </div>
+          <div class="qtyControls">
+            <button class="miniBtn" type="button" data-minus="${escapeHtml(id)}">−</button>
+            <div class="qty">${qty}</div>
+            <button class="miniBtn" type="button" data-plus="${escapeHtml(id)}" ${qty < available ? "" : "disabled"}>+</button>
+          </div>
+        `;
+        cartList.appendChild(row);
+      });
 
-        <p class="desc">${item.descrizione || ""}</p>
+      cartList.querySelectorAll("button[data-minus]").forEach(b => b.addEventListener("click", () => decCart(b.getAttribute("data-minus"))));
+      cartList.querySelectorAll("button[data-plus]").forEach(b => b.addEventListener("click", () => incCart(b.getAttribute("data-plus"))));
 
-        <div class="actions">
-          <button class="btn" disabled>Aggiungi al carrello</button>
-        </div>
-      </article>
-    `).join("");
-  })
-  .catch(() => {
-    grid.innerHTML = "<p>Errore di connessione.</p>";
-  });
-</script>
+      totalEl.textContent = `Totale: ${formatEUR(total)}`;
+      goCheckoutBtn.disabled = (count === 0);
+    }
 
+    // ===== CART LOGIC =====
+    function addToCart(id){
+      const item = catalogMap.get(String(id));
+      if (!item) return;
+
+      const available = Number(item.qty_disponibile || 0);
+      const current = Number(cart[id] || 0);
+
+      if (current >= available) return;
+
+      cart[id] = current + 1;
+      saveCart();
+      updateCartBadge();
+      renderCatalog();
+    }
+
+    function incCart(id){
+      const item = catalogMap.get(String(id));
+      if (!item) return;
+
+      const available = Number(item.qty_disponibile || 0);
+      const current = Number(cart[id] || 0);
+      if (current >= available) return;
+
+      cart[id] = current + 1;
+      saveCart();
+      updateCartBadge();
+      renderCart();
+      renderCatalog();
+    }
+
+    function decCart(id){
+      const current = Number(cart[id] || 0);
+      if (current <= 1) {
+        delete cart[id];
+      } else {
+        cart[id] = current - 1;
+      }
+      saveCart();
+      updateCartBadge();
+      renderCart();
+      renderCatalog();
+    }
+
+    function getCartCount(){
+      return Object.values(cart).reduce((sum, n) => sum + Number(n || 0), 0);
+    }
+
+    function updateCartBadge(){
+      cartCount.textContent = String(getCartCount());
+    }
+
+    function loadCart(){
+      try {
+        const raw = localStorage.getItem(LS_KEY);
+        if (!raw) return {};
+        const obj = JSON.parse(raw);
+        if (!obj || typeof obj !== 'object') return {};
+        return obj;
+      } catch { return {}; }
+    }
+
+    function saveCart(){
+      localStorage.setItem(LS_KEY, JSON.stringify(cart));
+    }
+
+    // ===== FORMAT/UTIL =====
+    function formatEUR(n){
+      // output tipo 500€ / 150€ (senza decimali) — coerente col tuo layout
+      const v = Math.round(Number(n || 0));
+      return `${v}€`;
+    }
+
+    function pad2(s){
+      const n = String(s);
+      return n.length === 1 ? `0${n}` : n;
+    }
+
+    function escapeHtml(str){
+      return str
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function formatDate(d){
+      // Apps Script può ritornare stringa ISO o Date serializzata. Gestiamo entrambe.
+      const dt = (d instanceof Date) ? d : new Date(d);
+      if (Number.isNaN(dt.getTime())) return "";
+      return dt.toLocaleString('it-IT', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+    }
+  </script>
 </body>
 </html>
