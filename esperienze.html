@@ -492,21 +492,31 @@ const PAY = window.WEDDING_CONFIG.PAY;
     // ===== INIT =====
     updateCartBadge();
 
-    fetch(API_URL + "?action=catalog")
-      .then(res => res.json())
-      .then(data => {
-        if (!data.ok) throw new Error("Catalog not ok");
-        catalog = data.items || [];
-        catalogMap = new Map(catalog.map(i => [String(i.id), i]));
+   function fetchCatalog() {
+  return fetch(API_URL + "?action=catalog")
+    .then(res => res.json())
+    .then(data => {
+      if (!data.ok) throw new Error("Catalog not ok");
 
-        // (Optional) se tutto è "VIAGGIO" lasciamo così. In futuro potremo raggruppare per categoria.
-        if (catalog[0] && catalog[0].categoria) categoryLabel.textContent = String(catalog[0].categoria).toUpperCase();
+      catalog = data.items || [];
+      catalogMap = new Map(catalog.map(i => [String(i.id), i]));
 
-        renderCatalog();
-      })
-      .catch(err => {
-        grid.innerHTML = `<p style="color:rgba(58,51,38,.75)">Errore nel caricamento delle esperienze. (${escapeHtml(String(err))})</p>`;
-      });
+      if (catalog[0] && catalog[0].categoria) {
+        categoryLabel.textContent = String(catalog[0].categoria).toUpperCase();
+      }
+
+      renderCatalog();
+      renderCart(); // così anche i tasti +/− rispettano le nuove disponibilità
+      return true;
+    })
+    .catch(err => {
+      grid.innerHTML = `<p style="color:rgba(58,51,38,.75)">Errore nel caricamento delle esperienze. (${escapeHtml(String(err))})</p>`;
+      return false;
+    });
+}
+
+// prima chiamata all’avvio
+fetchCatalog();
 
     // ===== UI EVENTS =====
     openCartBtn.addEventListener("click", () => openCart());
@@ -574,8 +584,8 @@ const PAY = window.WEDDING_CONFIG.PAY;
         cart = {};
         saveCart();
         updateCartBadge();
-        renderCart();
-        renderCatalog();
+        await fetchCatalog();
+
 
         goCheckoutBtn.disabled = true;
       } catch (err) {
