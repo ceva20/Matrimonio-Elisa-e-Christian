@@ -169,13 +169,25 @@
     .actions{ margin-top: 12px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 
 .qtyPicker{
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(138,111,47,.25);
-  background: rgba(255,255,255,.35);
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid rgba(58,51,38,.25);
+  background:rgba(255,255,255,.35);
+}
+
+.qtyPicker .miniBtn{
+  width:34px;
+  height:34px;
+  border-radius:12px;
+}
+
+.qtyPicker .qty{
+  width:22px;
+  text-align:center;
+  font-weight:700;
 }
 
 
@@ -508,7 +520,8 @@ let draftQty = {};
     updateCartBadge();
 
    function fetchCatalog() {
-  return fetch(API_URL + "?action=catalog")
+  return fetch(API_URL + "?action=catalog&t=" + Date.now(), { cache: "no-store" })
+
     .then(res => res.json())
     .then(data => {
       if (!data.ok) throw new Error("Catalog not ok");
@@ -658,31 +671,23 @@ const canAdd = (maxAdd > 0);
 
             <div class="actions">
   <div class="qtyPicker" data-qtywrap="${escapeHtml(id)}">
-    <button class="miniBtn" type="button" data-qminus="${escapeHtml(id)}" ${(draft > 0) ? "" : "disabled"}
-−</button>
-   <div class="qty" data-qvalue="${escapeHtml(id)}">0</div>
+    <button class="miniBtn" type="button" data-minus="${escapeHtml(id)}" ${qty > 1 ? "" : "disabled"}>−</button>
 
+    <div class="qty" data-qvalue="${escapeHtml(id)}">${draft}</div>
     <button class="miniBtn" type="button" data-qplus="${escapeHtml(id)}" ${canAdd ? "" : "disabled"}>+</button>
   </div>
 
   <button class="btn" type="button" ${(canAdd && draft > 0) ? "" : "disabled"} data-add="${escapeHtml(id)}">
-
     ${canAdd ? "Aggiungi al carrello" : "Esaurito"}
   </button>
 </div>
+
 
           </article>
         `;
       }).join("");
 
-      // bind add buttons
-      // imposta valori iniziali UI per ogni card
-catalog.forEach(item => {
-  const id = String(item.id);
-  const qEl = grid.querySelector(`[data-qvalue="${CSS.escape(id)}"]`);
-  if (qEl) qEl.textContent = String(draftQty[id] ?? 0);
-
-});
+    
 
 // −
 grid.querySelectorAll("button[data-qminus]").forEach(btn => {
