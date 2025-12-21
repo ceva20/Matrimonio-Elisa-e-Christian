@@ -166,7 +166,18 @@
 
     .desc{ margin: 0; font-size: 12px; color: rgba(58,51,38,.75); max-width: 52ch; }
 
-    .actions{ margin-top: 12px; display: flex; gap: 10px; align-items: center; }
+    .actions{ margin-top: 12px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+
+.qtyPicker{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(138,111,47,.25);
+  background: rgba(255,255,255,.35);
+}
+
 
     .btn{
       appearance: none;
@@ -489,6 +500,10 @@ const PAY = window.WEDDING_CONFIG.PAY;
     // cart: { [itemId]: qty }
     let cart = loadCart();
 
+// quantità selezionata per ogni card (prima dell'aggiunta al carrello)
+let draftQty = {};
+
+
     // ===== INIT =====
     updateCartBadge();
 
@@ -606,8 +621,18 @@ fetchCatalog();
       grid.innerHTML = catalog.map(item => {
         const id = String(item.id);
         const available = Number(item.qty_disponibile || 0);
-        const inCart = Number(cart[id] || 0);
-        const canAdd = (inCart < available);
+const inCart = Number(cart[id] || 0);
+const maxAdd = Math.max(0, available - inCart);
+
+const currentDraft = Number(draftQty[id] || 1);
+const draft = (maxAdd > 0)
+  ? Math.min(Math.max(currentDraft, 1), maxAdd)
+  : 0;
+
+draftQty[id] = draft;
+
+const canAdd = (maxAdd > 0);
+
 
         // Placeholder immagine se vuota
         const img = (item.img_url && String(item.img_url).trim().length > 0) ? String(item.img_url) : "images/placeholder.jpg";
@@ -624,28 +649,76 @@ fetchCatalog();
             </div>
 
             <div class="meta">
-              <div class="remaining">Ancora ${available} rimanenti</div>
+              <div class="remaining" data-remaining="${escapeHtml(id)}">Ancora ${Math.max(0, available - inCart - draft)} rimanenti</div>
+
               <div class="price">${formatEUR(Number(item.prezzo_eur || 0))}</div>
             </div>
 
             <p class="desc">${escapeHtml(String(item.descrizione || ""))}</p>
 
             <div class="actions">
-              <button class="btn" type="button" ${canAdd ? "" : "disabled"} data-add="${escapeHtml(id)}">
-                ${canAdd ? "Aggiungi al carrello" : "Esaurito"}
-              </button>
-            </div>
+  <div class="qtyPicker" data-qtywrap="${escapeHtml(id)}">
+    <button class="miniBtn" type="button" data-qminus="${escapeHtml(id)}" ${(canAdd && draftQty[id] > 1) ? "" : "disabled"}>−</button>
+    <div class="qty" data-qvalue="${escapeHtml(id)}">1</div>
+    <button class="miniBtn" type="button" data-qplus="${escapeHtml(id)}" ${canAdd ? "" : "disabled"}>+</button>
+  </div>
+
+  <button class="btn" type="button" ${canAdd ? "" : "disabled"} data-add="${escapeHtml(id)}">
+    ${canAdd ? "Aggiungi al carrello" : "Esaurito"}
+  </button>
+</div>
+
           </article>
         `;
       }).join("");
 
       // bind add buttons
-      grid.querySelectorAll("button[data-add]").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const id = btn.getAttribute("data-add");
-          addToCart(id);
-        });
-      });
+      // imposta valori iniziali UI per ogni card
+catalog.forEach(item => {
+  const id = String(item.id);
+  const qEl = grid.querySelector(`[data-qvalue="${CSS.escape(id)}"]`);
+  if (qEl) qEl.textContent = String(draftQty[id] || 1);
+});
+
+// −
+grid.querySelectorAll("button[data-qminus]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const id = btn.getAttribute("data-qminus");
+    draftQty[id] = Math.max(1, Number(draftQty[id] || 1) - 1);
+    renderCatalog();
+  });
+});
+
+// +
+grid.querySelectorAll("button[data-qplus]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const id = btn.getAttribute("data-qplus");
+    const item = catalogMap.get(String(id));
+    if (!item) return;
+
+    const available = Number(item.qty_disponibile || 0);
+    const inCart = Number(cart[id] || 0);
+    const maxAdd = Math.max(0, available - inCart);
+
+    draftQty[id] = Math.min(Math.max(1, Number(draftQty[id] || 1) + 1), Math.max(1, maxAdd));
+    renderCatalog();
+  });
+});
+
+// Aggiungi al carrello (quantità selezionata)
+grid.querySelectorAll("button[data-add]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const id = btn.getAttribute("data-add");
+    const qty = Number(draftQty[id] || 1);
+
+    addToCart(id, qty);
+
+    // reset draft a 1 dopo aggiunta
+    draftQty[id] = 1;
+    renderCatalog();
+  });
+});
+
     }
 
     function openCart(){
@@ -705,7 +778,8 @@ fetchCatalog();
     }
 
     // ===== CART LOGIC =====
-    function addToCart(id){
+   function addToCart(id, qty = 1){
+
       const item = catalogMap.get(String(id));
       if (!item) return;
 
@@ -714,7 +788,8 @@ fetchCatalog();
 
       if (current >= available) return;
 
-      cart[id] = current + 1;
+     cart[id] = Math.min(current + Number(qty || 1), available);
+
       saveCart();
       updateCartBadge();
       renderCatalog();
