@@ -776,7 +776,8 @@ if (qty <= 0) return;
             <p class="sub">${formatEUR(price)} × ${qty} — <strong>${formatEUR(subtotal)}</strong></p>
           </div>
           <div class="qtyControls">
-            <button class="miniBtn" type="button" data-minus="${escapeHtml(id)}">−</button>
+            <button class="miniBtn" type="button" data-minus="${escapeHtml(id)}" ${qty > 1 ? "" : "disabled"}>−</button>
+
             <div class="qty">${qty}</div>
             <button class="miniBtn" type="button" data-plus="${escapeHtml(id)}" ${qty < available ? "" : "disabled"}>+</button>
           </div>
