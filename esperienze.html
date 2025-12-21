@@ -217,6 +217,22 @@
       box-shadow: none;
     }
 
+    .footerCtas{
+  display:flex;
+  gap:12px;
+  justify-content:flex-end;
+  align-items:center;
+}
+.btn.ghost{
+  background:transparent;
+  border:1px solid rgba(138,111,47,.45);
+  color:var(--gold);
+}
+.btn.ghost:hover{
+  background:rgba(255,255,255,.35);
+}
+
+
     /* ===== MODAL CARRELLO ===== */
     .overlay{
       position: fixed;
@@ -458,14 +474,16 @@
           <div class="ibanBox" id="paymentBox" style="display:none;"></div>
 
           <div class="twoBtns">
-            <button class="btn checkoutBtn" id="confirmCheckout" type="button">Procedi al pagamento</button>
-            <button class="btn" id="backToCart" type="button" style="background:transparent;color:var(--gold);border:1px solid rgba(154,131,62,.55);box-shadow:none;font-weight:800;">Torna al carrello</button>
           </div>
         </div>
       </div>
       <div class="modalFooter">
         <div class="total" id="total">Totale: 0€</div>
-        <button class="btn checkoutBtn" id="goCheckout" type="button" disabled>Vai al checkout</button>
+        <div class="footerCtas">
+  <button class="btn ghost" type="button" id="backToCartBtn">Torna al carrello</button>
+  <button class="btn primary" type="button" id="goCheckoutBtn">Regala ora</button>
+</div>
+
       </div>
     </div>
   </div>
@@ -494,11 +512,11 @@ const PAY = window.WEDDING_CONFIG.PAY;
     const cartList = document.getElementById("cartList");
     const emptyMsg = document.getElementById("emptyMsg");
     const totalEl = document.getElementById("total");
+  
+const checkoutBox = document.getElementById("checkoutBox");
+  const goCheckoutBtn = document.getElementById("goCheckoutBtn");
+const backToCartBtn = document.getElementById("backToCartBtn");
 
-    const goCheckoutBtn = document.getElementById("goCheckout");
-    const checkoutBox = document.getElementById("checkoutBox");
-    const confirmCheckoutBtn = document.getElementById("confirmCheckout");
-    const backToCartBtn = document.getElementById("backToCart");
 
     const custName = document.getElementById("custName");
     const custEmail = document.getElementById("custEmail");
@@ -555,12 +573,6 @@ fetchCatalog();
       if (e.target === overlay) closeCart();
     });
 
-    goCheckoutBtn.addEventListener("click", () => {
-      if (getCartCount() === 0) return;
-      checkoutBox.classList.add("open");
-      paymentBox.style.display = "none";
-      paymentBox.innerHTML = "";
-    });
 
     backToCartBtn.addEventListener("click", () => {
       checkoutBox.classList.remove("open");
@@ -568,12 +580,22 @@ fetchCatalog();
       paymentBox.innerHTML = "";
     });
 
-    confirmCheckoutBtn.addEventListener("click", async () => {
+    goCheckoutBtn.addEventListener("click", async () => {
+     // Se il checkout non è ancora aperto, aprilo e fermati qui
+if (!checkoutBox.classList.contains("open")) {
+  checkoutBox.classList.add("open");
+  paymentBox.style.display = "none";
+  paymentBox.innerHTML = "";
+  return;
+}
+
+
+
       // crea ordine (HOLD) su backend
       if (getCartCount() === 0) return;
 
-      confirmCheckoutBtn.disabled = true;
-      confirmCheckoutBtn.textContent = "Sto generando il checkout…";
+     goCheckoutBtn.textContent = "Sto generando il checkout…";
+
 
       try {
         const payload = {
@@ -617,12 +639,19 @@ fetchCatalog();
         await fetchCatalog();
 
 
-        goCheckoutBtn.disabled = true;
+        goCheckoutBtn.disabled = (getCartCount() === 0);
+goCheckoutBtn.textContent = "Regala ora";
+
       } catch (err) {
         alert("Errore checkout: " + String(err));
       } finally {
-        confirmCheckoutBtn.disabled = false;
-        confirmCheckoutBtn.textContent = "Procedi al pagamento";
+    // riabilita solo se NON ho mostrato il paymentBox
+if (paymentBox.style.display !== "block") {
+  goCheckoutBtn.disabled = false;
+  goCheckoutBtn.textContent = "Regala ora";
+}
+
+
       }
     });
 
@@ -725,11 +754,10 @@ grid.querySelectorAll("button[data-add]").forEach(btn => {
 if (qty <= 0) return;
 
 
-    addToCart(id, qty);
-
-    // reset draft a 1 dopo aggiunta
     draftQty[id] = 0;
-    renderCatalog();
+addToCart(id, qty);
+renderCatalog();
+
   });
 });
 
@@ -807,7 +835,7 @@ if (qty <= 0) return;
 
       saveCart();
       updateCartBadge();
-      renderCatalog();
+    
     }
 
     function incCart(id){
@@ -822,7 +850,7 @@ if (qty <= 0) return;
       saveCart();
       updateCartBadge();
       renderCart();
-      renderCatalog();
+    
     }
 
     function decCart(id){
@@ -835,7 +863,7 @@ if (qty <= 0) return;
       saveCart();
       updateCartBadge();
       renderCart();
-      renderCatalog();
+     
     }
 
     function getCartCount(){
