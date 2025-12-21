@@ -515,6 +515,8 @@ let draftQty = {};
 
       catalog = data.items || [];
       catalogMap = new Map(catalog.map(i => [String(i.id), i]));
+      draftQty = {};
+
 
       if (catalog[0] && catalog[0].categoria) {
         categoryLabel.textContent = String(catalog[0].categoria).toUpperCase();
@@ -624,11 +626,9 @@ fetchCatalog();
 const inCart = Number(cart[id] || 0);
 const maxAdd = Math.max(0, available - inCart);
 
-const currentDraft = Number(draftQty[id] || 1);
-const draft = (maxAdd > 0)
-  ? Math.min(Math.max(currentDraft, 1), maxAdd)
-  : 0;
+const currentDraft = Number(draftQty[id] ?? 0);
 
+const draft = Math.min(Math.max(currentDraft, 0), maxAdd); // clamp 0..maxAdd
 draftQty[id] = draft;
 
 const canAdd = (maxAdd > 0);
@@ -658,12 +658,15 @@ const canAdd = (maxAdd > 0);
 
             <div class="actions">
   <div class="qtyPicker" data-qtywrap="${escapeHtml(id)}">
-    <button class="miniBtn" type="button" data-qminus="${escapeHtml(id)}" ${(canAdd && draftQty[id] > 1) ? "" : "disabled"}>−</button>
-    <div class="qty" data-qvalue="${escapeHtml(id)}">1</div>
+    <button class="miniBtn" type="button" data-qminus="${escapeHtml(id)}" ${(draft > 0) ? "" : "disabled"}
+−</button>
+   <div class="qty" data-qvalue="${escapeHtml(id)}">0</div>
+
     <button class="miniBtn" type="button" data-qplus="${escapeHtml(id)}" ${canAdd ? "" : "disabled"}>+</button>
   </div>
 
-  <button class="btn" type="button" ${canAdd ? "" : "disabled"} data-add="${escapeHtml(id)}">
+  <button class="btn" type="button" ${(canAdd && draft > 0) ? "" : "disabled"} data-add="${escapeHtml(id)}">
+
     ${canAdd ? "Aggiungi al carrello" : "Esaurito"}
   </button>
 </div>
@@ -677,14 +680,16 @@ const canAdd = (maxAdd > 0);
 catalog.forEach(item => {
   const id = String(item.id);
   const qEl = grid.querySelector(`[data-qvalue="${CSS.escape(id)}"]`);
-  if (qEl) qEl.textContent = String(draftQty[id] || 1);
+  if (qEl) qEl.textContent = String(draftQty[id] ?? 0);
+
 });
 
 // −
 grid.querySelectorAll("button[data-qminus]").forEach(btn => {
   btn.addEventListener("click", () => {
     const id = btn.getAttribute("data-qminus");
-    draftQty[id] = Math.max(1, Number(draftQty[id] || 1) - 1);
+    draftQty[id] = Math.max(0, Number(draftQty[id] ?? 0) - 1);
+
     renderCatalog();
   });
 });
@@ -700,7 +705,8 @@ grid.querySelectorAll("button[data-qplus]").forEach(btn => {
     const inCart = Number(cart[id] || 0);
     const maxAdd = Math.max(0, available - inCart);
 
-    draftQty[id] = Math.min(Math.max(1, Number(draftQty[id] || 1) + 1), Math.max(1, maxAdd));
+    draftQty[id] = Math.min(Math.max(0, Number(draftQty[id] ?? 0) + 1), maxAdd);
+
     renderCatalog();
   });
 });
@@ -709,12 +715,14 @@ grid.querySelectorAll("button[data-qplus]").forEach(btn => {
 grid.querySelectorAll("button[data-add]").forEach(btn => {
   btn.addEventListener("click", () => {
     const id = btn.getAttribute("data-add");
-    const qty = Number(draftQty[id] || 1);
+    const qty = Number(draftQty[id] ?? 0);
+if (qty <= 0) return;
+
 
     addToCart(id, qty);
 
     // reset draft a 1 dopo aggiunta
-    draftQty[id] = 1;
+    draftQty[id] = 0;
     renderCatalog();
   });
 });
