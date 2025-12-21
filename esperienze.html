@@ -671,7 +671,8 @@ const canAdd = (maxAdd > 0);
 
             <div class="actions">
   <div class="qtyPicker" data-qtywrap="${escapeHtml(id)}">
-    <button class="miniBtn" type="button" data-minus="${escapeHtml(id)}" ${qty > 1 ? "" : "disabled"}>−</button>
+    <button class="miniBtn" type="button" data-qminus="${escapeHtml(id)}" ${(draft > 0) ? "" : "disabled"}>−</button>
+
 
     <div class="qty" data-qvalue="${escapeHtml(id)}">${draft}</div>
     <button class="miniBtn" type="button" data-qplus="${escapeHtml(id)}" ${canAdd ? "" : "disabled"}>+</button>
