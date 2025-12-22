@@ -627,7 +627,11 @@ if (!checkoutBox.classList.contains("open")) {
         paymentBox.innerHTML = `
           <div style="font-weight:900; margin-bottom:8px;">Totale: ${formatEUR(total)}</div>
           <div><strong>Intestatario:</strong> ${escapeHtml(PAY.intestatario)}</div>
-          <div><strong>IBAN:</strong> <span class="code">${escapeHtml(PAY.iban)}</span></div>
+          <div>
+  <strong>IBAN:</strong> <span class="code" id="ibanValue">${escapeHtml(PAY.iban)}</span>
+  <button class="miniBtn" onclick="copyIBAN()" style="margin-left:8px;" aria-label="Copia IBAN">📋</button>
+</div>
+
           <div><strong>Banca:</strong> ${escapeHtml(PAY.banca)}</div>
           <div style="margin-top:10px;"><strong>Causale:</strong> <span class="code">${escapeHtml(code)}</span></div>
           <div style="margin-top:8px; font-size:12px; color:rgba(58,51,38,.8)">${escapeHtml(PAY.note)}</div>
@@ -636,14 +640,28 @@ if (!checkoutBox.classList.contains("open")) {
 
         // IMPORTANT: svuotiamo il carrello lato client (per evitare doppi invii) 
         // L'inventario è già "in hold" sul backend.
-        cart = {};
-        saveCart();
-        updateCartBadge();
-        await fetchCatalog();
+       goCheckoutBtn.style.display = "none";
 
+const doneBtn = document.createElement("button");
+doneBtn.className = "btn primary";
+doneBtn.textContent = "Regalo effettuato";
+doneBtn.type = "button";
+doneBtn.addEventListener("click", () => {
+  cart = {};
+  saveCart();
+  updateCartBadge();
+  fetchCatalog();
+  closeCart();
+  goCheckoutBtn.style.display = "inline-block";
+  goCheckoutBtn.textContent = "Regala ora";
+  paymentBox.innerHTML = "";
+  paymentBox.style.display = "none";
+});
 
-        goCheckoutBtn.disabled = (getCartCount() === 0);
-goCheckoutBtn.textContent = "Regala ora";
+const btnContainer = paymentBox.parentElement.querySelector(".twoBtns");
+btnContainer.innerHTML = "";
+btnContainer.appendChild(doneBtn);
+
 
       } catch (err) {
         alert("Errore checkout: " + String(err));
@@ -918,6 +936,20 @@ renderCatalog();
       if (Number.isNaN(dt.getTime())) return "";
       return dt.toLocaleString('it-IT', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
     }
+
+  function copyIBAN(){
+  const iban = document.getElementById("ibanValue")?.textContent || "";
+  if (!navigator.clipboard) {
+    alert("Copia non supportata dal browser.");
+    return;
+  }
+  navigator.clipboard.writeText(iban).then(() => {
+    alert("IBAN copiato!");
+  }, err => {
+    alert("Errore nella copia.");
+  });
+}
+
   </script>
 </body>
 </html>
