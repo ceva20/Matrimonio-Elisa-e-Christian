@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Lista Nozze</title>
+  <style>
+    body { font-family: sans-serif; padding: 40px; background: #fff7e7; color: #3a3326; }
+    h1 { font-size: 22px; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    th, td { padding: 12px; border: 1px solid #ddd; font-size: 14px; }
+    th { background: #f0e3c8; text-align: left; }
+    button { padding: 6px 10px; margin-right: 6px; cursor: pointer; font-size: 13px; border-radius: 6px; }
+    .ok { background: #9abf3d; color: white; border: none; }
+    .warn { background: #ffc107; color: black; border: none; }
+  </style>
+</head>
+<body>
+
+<h1>Ordini in attesa di conferma</h1>
+<table id="orderTable">
+  <thead>
+    <tr>
+      <th>Data</th>
+      <th>Nome</th>
+      <th>Email</th>
+      <th>Partecipanti</th>
+      <th>Note</th>
+      <th>Causale</th>
+      <th>Azioni</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+const API_URL = 'https://script.google.com/macros/s/PASTE_WEBAPP_URL_HERE/exec';
+
+function loadPendingOrders() {
+  fetch(API_URL + '?action=pending&t=' + Date.now())
+    .then(res => res.json())
+    .then(data => {
+      const tbody = document.querySelector('#orderTable tbody');
+      tbody.innerHTML = '';
+      data.orders.forEach(ord => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${ord.data || ''}</td>
+          <td>${ord.nome || ''}</td>
+          <td>${ord.email || ''}</td>
+          <td>${(ord.participants || []).join(', ')}</td>
+          <td>${ord.note || ''}</td>
+          <td><code>${ord.causale || ''}</code></td>
+          <td>
+            <button class="ok" onclick="confirmOrder('${ord.order_id}')">✅ Conferma</button>
+            <button class="warn" onclick="requestProof('${ord.order_id}')">📎 Richiedi contabile</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    });
+}
+
+function confirmOrder(order_id) {
+  fetch(API_URL + '?action=confirm', {
+    method: 'POST',
+    body: JSON.stringify({ order_id }),
+    headers: { 'Content-Type': 'text/plain' }
+  }).then(() => loadPendingOrders());
+}
+
+function requestProof(order_id) {
+  fetch(API_URL + '?action=request_proof', {
+    method: 'POST',
+    body: JSON.stringify({ order_id }),
+    headers: { 'Content-Type': 'text/plain' }
+  }).then(() => alert("Richiesta contabile inviata"));
+}
+
+loadPendingOrders();
+</script>
+
+</body>
+</html>
