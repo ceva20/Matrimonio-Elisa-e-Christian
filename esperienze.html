@@ -477,9 +477,18 @@
               <label for="custEmail">Email</label>
               <input id="custEmail" type="email" placeholder="nome@email.it" />
             </div>
+            <div class="field" style="margin-top:10px;">
+  <label for="custNotes">Note (facoltative)</label>
+  <input id="custNotes" type="text" placeholder="Scrivi un messaggio se vuoi…" />
+</div>
           </div>
 
           <div class="ibanBox" id="paymentBox" style="display:none;"></div>
+<div class="field" style="margin-top:10px;">
+  <label>Altri partecipanti (facoltativo)</label>
+  <div id="participantsList"></div>
+  <button type="button" class="btn ghost" style="margin-top:6px;" onclick="addParticipant()">+ Aggiungi partecipante</button>
+</div>
 
           <div class="twoBtns">
           </div>
@@ -509,8 +518,10 @@ const API_URL = window.WEDDING_CONFIG.API_URL;
 const PAY = window.WEDDING_CONFIG.PAY;
 
     // ===== DOM =====
+  
     const grid = document.getElementById("grid");
     const categoryLabel = document.getElementById("categoryLabel");
+const custNotes = document.getElementById("custNotes");
 
     const openCartBtn = document.getElementById("openCart");
     const closeCartBtn = document.getElementById("closeCart");
@@ -604,18 +615,31 @@ if (!checkoutBox.classList.contains("open")) {
 
       // crea ordine (HOLD) su backend
       if (getCartCount() === 0) return;
+      const name = custName.value.trim();
+const email = custEmail.value.trim();
+
+if (!name || !email) {
+  alert("Inserisci il tuo nome e un’email di riferimento.");
+  return;
+}
+
 
      goCheckoutBtn.textContent = "Sto generando il checkout…";
 
 
       try {
-        const payload = {
-          customer: {
-            nome: custName.value || "",
-            email: custEmail.value || ""
-          },
-          cart: Object.entries(cart).map(([item_id, qty]) => ({ item_id, qty }))
-        };
+       const payload = {
+  customer: {
+    nome: custName.value || "",
+    email: custEmail.value || "",
+    note: custNotes.value || ""
+  },
+  participants: Array.from(document.querySelectorAll(".participantInput"))
+    .map(p => p.value.trim())
+    .filter(p => p.length > 0),
+  cart: Object.entries(cart).map(([item_id, qty]) => ({ item_id, qty }))
+};
+
 
         const res = await fetch(API_URL + "?action=checkout", {
   method: "POST",
@@ -1066,6 +1090,17 @@ function showThanksToast(){
     toast.remove();
   }, 3000);
 }
+
+  function addParticipant() {
+  const container = document.getElementById("participantsList");
+  const input = document.createElement("input");
+  input.type = "text";
+  input.placeholder = "Nome e cognome";
+  input.className = "participantInput";
+  input.style = "margin-top:4px; width:100%; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(138,111,47,.25); background: rgba(255,255,255,.9); font-family: Montserrat, sans-serif; font-size: 13px;";
+  container.appendChild(input);
+}
+
 
   </script>
 </body>
