@@ -578,6 +578,8 @@ fetchCatalog();
       checkoutBox.classList.remove("open");
       paymentBox.style.display = "none";
       paymentBox.innerHTML = "";
+      goCheckoutBtn.textContent = "Regala ora";
+
     });
 
     goCheckoutBtn.addEventListener("click", async () => {
@@ -586,6 +588,7 @@ if (!checkoutBox.classList.contains("open")) {
   checkoutBox.classList.add("open");
   paymentBox.style.display = "none";
   paymentBox.innerHTML = "";
+  goCheckoutBtn.textContent = "Conferma regalo";
   return;
 }
 
