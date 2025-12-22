@@ -901,6 +901,7 @@ row.classList.add("cartRowAnimated");
         saveCart();
         updateCartBadge();
         renderCart();
+        fetchCatalog(); // aggiorna qty_disponibile
         showUndoMessage(id);
       }, 300); // stesso timing della transizione
     } else {
@@ -908,6 +909,7 @@ row.classList.add("cartRowAnimated");
       saveCart();
       updateCartBadge();
       renderCart();
+      fetchCatalog(); // FIX INVENTARIO
       showUndoMessage(id);
     }
   } else {
