@@ -630,6 +630,8 @@ if (!checkoutBox.classList.contains("open")) {
           <div>
   <strong>IBAN:</strong> <span class="code" id="ibanValue">${escapeHtml(PAY.iban)}</span>
   <button class="miniBtn" onclick="copyIBAN()" style="margin-left:8px;" aria-label="Copia IBAN">📋</button>
+<span id="ibanCopiedMsg" style="margin-left:6px; font-size:12px; color:green; display:none;">IBAN copiato ✓</span>
+
 </div>
 
           <div><strong>Banca:</strong> ${escapeHtml(PAY.banca)}</div>
@@ -651,6 +653,7 @@ doneBtn.addEventListener("click", () => {
   saveCart();
   updateCartBadge();
   fetchCatalog();
+ showThanksToast();
   closeCart();
   goCheckoutBtn.style.display = "inline-block";
   goCheckoutBtn.textContent = "Regala ora";
@@ -939,15 +942,49 @@ renderCatalog();
 
   function copyIBAN(){
   const iban = document.getElementById("ibanValue")?.textContent || "";
+  const msg = document.getElementById("ibanCopiedMsg");
+
   if (!navigator.clipboard) {
-    alert("Copia non supportata dal browser.");
+    msg.textContent = "Copia non supportata";
+    msg.style.color = "red";
+    msg.style.display = "inline";
     return;
   }
+
   navigator.clipboard.writeText(iban).then(() => {
-    alert("IBAN copiato!");
+    msg.textContent = "IBAN copiato ✓";
+    msg.style.color = "green";
+    msg.style.display = "inline";
+    setTimeout(() => {
+      msg.style.display = "none";
+    }, 2000);
   }, err => {
-    alert("Errore nella copia.");
+    msg.textContent = "Errore copia";
+    msg.style.color = "red";
+    msg.style.display = "inline";
   });
+}
+
+function showThanksToast(){
+  const toast = document.createElement("div");
+  toast.textContent = "Grazie di cuore per il tuo regalo! 💛";
+  toast.style.position = "fixed";
+  toast.style.bottom = "24px";
+  toast.style.left = "50%";
+  toast.style.transform = "translateX(-50%)";
+  toast.style.background = "#9a833e";
+  toast.style.color = "#fff7e7";
+  toast.style.padding = "12px 18px";
+  toast.style.borderRadius = "999px";
+  toast.style.boxShadow = "0 10px 20px rgba(0,0,0,.2)";
+  toast.style.fontSize = "14px";
+  toast.style.fontWeight = "600";
+  toast.style.zIndex = "9999";
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.remove();
+  }, 3000);
 }
 
   </script>
