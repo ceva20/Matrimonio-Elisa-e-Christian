@@ -424,6 +424,14 @@
       .photo{ height: 240px; }
       .fieldRow{ grid-template-columns: 1fr; }
     }
+    
+    .cartRowAnimated {
+  transition: opacity 0.3s ease;
+}
+.cartRow.fadeOut {
+  opacity: 0;
+}
+
 
     a:focus-visible, button:focus-visible{ outline: 3px solid rgba(154,131,62,.45); outline-offset: 4px; border-radius: 12px; }
   </style>
@@ -828,13 +836,18 @@ renderCatalog();
             <p class="sub">${formatEUR(price)} × ${qty} — <strong>${formatEUR(subtotal)}</strong></p>
           </div>
           <div class="qtyControls">
-            <button class="miniBtn" type="button" data-minus="${escapeHtml(id)}" ${qty > 1 ? "" : "disabled"}>−</button>
+            <button class="miniBtn" type="button" data-minus="${escapeHtml(id)}">−</button>
+
 
             <div class="qty">${qty}</div>
             <button class="miniBtn" type="button" data-plus="${escapeHtml(id)}" ${qty < available ? "" : "disabled"}>+</button>
           </div>
         `;
         cartList.appendChild(row);
+
+// Aggiungi effetto fade-out su rimozione
+row.classList.add("cartRowAnimated");
+
       });
 
       cartList.querySelectorAll("button[data-minus]").forEach(b => b.addEventListener("click", () => decCart(b.getAttribute("data-minus"))));
@@ -878,17 +891,82 @@ renderCatalog();
     }
 
     function decCart(id){
-      const current = Number(cart[id] || 0);
-      if (current <= 1) {
+  const current = Number(cart[id] || 0);
+  if (current <= 1) {
+    const row = cartList.querySelector(`button[data-minus="${id}"]`)?.closest(".cartRow");
+    if (row) {
+      row.classList.add("fadeOut");
+      setTimeout(() => {
         delete cart[id];
-      } else {
-        cart[id] = current - 1;
-      }
+        saveCart();
+        updateCartBadge();
+        renderCart();
+        showUndoMessage(id);
+      }, 300); // stesso timing della transizione
+    } else {
+      delete cart[id];
       saveCart();
       updateCartBadge();
       renderCart();
-     
+      showUndoMessage(id);
     }
+  } else {
+    cart[id] = current - 1;
+    saveCart();
+    updateCartBadge();
+    renderCart();
+  }
+}
+
+  function showUndoMessage(id){
+  const item = catalogMap.get(String(id));
+  const name = item ? item.nome : "Elemento rimosso";
+
+  const msg = document.createElement("div");
+  msg.style.position = "fixed";
+  msg.style.bottom = "24px";
+  msg.style.left = "50%";
+  msg.style.transform = "translateX(-50%)";
+  msg.style.background = "#fff7e7";
+  msg.style.color = "#3a3326";
+  msg.style.padding = "10px 16px";
+  msg.style.borderRadius = "999px";
+  msg.style.boxShadow = "0 8px 16px rgba(0,0,0,.15)";
+  msg.style.fontSize = "13px";
+  msg.style.fontWeight = "600";
+  msg.style.zIndex = "9999";
+  msg.style.display = "flex";
+  msg.style.alignItems = "center";
+  msg.style.gap = "12px";
+
+  msg.innerHTML = `<span>“${escapeHtml(name)}” rimosso</span>`;
+
+  const undoBtn = document.createElement("button");
+  undoBtn.textContent = "Annulla";
+  undoBtn.style.background = "#9a833e";
+  undoBtn.style.color = "#fff7e7";
+  undoBtn.style.border = "none";
+  undoBtn.style.borderRadius = "999px";
+  undoBtn.style.padding = "6px 12px";
+  undoBtn.style.fontSize = "12px";
+  undoBtn.style.fontWeight = "700";
+  undoBtn.style.cursor = "pointer";
+
+  let timeout = setTimeout(() => msg.remove(), 4000);
+
+  undoBtn.addEventListener("click", () => {
+    cart[id] = 1;
+    saveCart();
+    updateCartBadge();
+    renderCart();
+    clearTimeout(timeout);
+    msg.remove();
+  });
+
+  msg.appendChild(undoBtn);
+  document.body.appendChild(msg);
+}
+
 
     function getCartCount(){
       return Object.values(cart).reduce((sum, n) => sum + Number(n || 0), 0);
