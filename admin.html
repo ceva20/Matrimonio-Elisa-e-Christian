@@ -2,109 +2,115 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>Admin Lista Nozze</title>
+  <title>Admin - Lista Nozze</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
       font-family: system-ui, sans-serif;
-      padding: 40px;
-      background: #fff7e7;
-      color: #3a3326;
+      background: #f5f5f5;
+      padding: 20px;
     }
     h1 {
-      font-size: 22px;
-      margin-bottom: 24px;
+      font-size: 24px;
+      margin-bottom: 20px;
     }
     .order {
       background: #fff;
-      border: 1px solid #ccc;
+      border-radius: 12px;
       padding: 16px;
-      margin-bottom: 24px;
-      border-radius: 8px;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
     }
-    .order h3 {
-      margin: 0 0 8px;
+    .order h2 {
+      margin: 0 0 8px 0;
       font-size: 18px;
     }
     .order p {
       margin: 4px 0;
       font-size: 14px;
     }
-    button {
-      margin-top: 10px;
-      margin-right: 8px;
-      padding: 8px 12px;
-      font-size: 13px;
-      cursor: pointer;
-      border-radius: 6px;
-      border: none;
+    .order .buttons {
+      margin-top: 12px;
     }
-    button.ok {
-      background-color: #9abf3d;
+    .order button {
+      padding: 6px 10px;
+      margin-right: 6px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .confirm {
+      background: #42b983;
       color: white;
     }
-    button.warn {
-      background-color: #ffc107;
-      color: black;
+    .request {
+      background: #f39c12;
+      color: white;
     }
   </style>
 </head>
 <body>
+  <h1>Ordini in attesa di conferma</h1>
+  <div id="orders"></div>
 
-<h1>Ordini in attesa di conferma</h1>
-<div id="ordersList"></div>
+  <script src="config.js"></script>
+  <script>
+    const API = window.WEDDING_CONFIG.API_URL;
 
-<script>
-const API_URL = window.WEDDING_CONFIG?.API_URL || "https://script.google.com/macros/s/AKfycbxkPd1m-IimI1O2jPpY0VJK9yneiFpCFBlW2p7xqHiN/dev/exec";
+    async function loadOrders() {
+      const res = await fetch(API + "?action=pending&t=" + Date.now(), { cache: "no-store" });
+      const json = await res.json();
+      if (!json.ok) {
+        alert("Errore nel caricamento degli ordini.");
+        return;
+      }
 
-async function loadPendingOrders() {
-  const res = await fetch(`${API_URL}?action=pending&t=${Date.now()}`);
-  const data = await res.json();
+      const container = document.getElementById("orders");
+      container.innerHTML = "";
 
-  const list = document.getElementById("ordersList");
-  list.innerHTML = "";
+      json.orders.forEach(ord => {
+        const div = document.createElement("div");
+        div.className = "order";
 
-  data.orders.forEach(order => {
-    const div = document.createElement("div");
-    div.className = "order";
+        const esperienze = ord.cart.map(e => `${e.qty}× ${e.item_id}`).join(", ");
 
-    div.innerHTML = `
-      <h3>${order.nome} (${order.email})</h3>
-      <p><strong>Causale:</strong> <code>${order.causale}</code></p>
-      <p><strong>Partecipanti:</strong> ${Array.isArray(order.participants) ? order.participants.join(", ") : ""}</p>
-      <p><strong>Note:</strong> ${order.note || "—"}</p>
-      <p><strong>Totale:</strong> ${order.total_eur || "—"} €</p>
-      <button class="ok" onclick="confirmOrder('${order.order_id}')">✅ Conferma regalo</button>
-      <button class="warn" onclick="requestProof('${order.order_id}')">📩 Chiedi contabile</button>
-    `;
+        div.innerHTML = `
+          <h2>${ord.nome}</h2>
+          <p><strong>Email:</strong> ${ord.email}</p>
+          <p><strong>Data:</strong> ${ord.ts || "?"}</p>
+          <p><strong>Causale:</strong> ${ord.causale}</p>
+          <p><strong>Totale:</strong> € ${ord.totale}</p>
+          <p><strong>Esperienze:</strong> ${esperienze}</p>
+          <p><strong>Partecipanti:</strong> ${ord.participants?.join(", ") || "-"}</p>
+          <p><strong>Note:</strong> ${ord.note || "-"}</p>
+          <div class="buttons">
+            <button class="confirm" onclick="confirmOrder('${ord.order_id}', this)">Conferma bonifico</button>
+            <button class="request">Chiedi contabile</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
 
-    list.appendChild(div);
-  });
-}
+    async function confirmOrder(order_id, btn) {
+      if (!confirm("Confermare questo ordine come PAGATO?")) return;
+      btn.disabled = true;
+      const res = await fetch(API + "?action=confirm", {
+        method: "POST",
+        headers: { "Content-Type": "text/plain" },
+        body: JSON.stringify({ order_id })
+      });
+      const json = await res.json();
+      if (json.ok) {
+        btn.closest(".order").remove();
+      } else {
+        alert("Errore: " + (json.error || "generico"));
+        btn.disabled = false;
+      }
+    }
 
-async function confirmOrder(orderId) {
-  await fetch(`${API_URL}?action=confirm`, {
-    method: "POST",
-    body: JSON.stringify({ order_id: orderId }),
-    headers: { "Content-Type": "text/plain" }
-  });
-  await loadPendingOrders();
-}
-
-async function requestProof(orderId) {
-  await fetch(`${API_URL}?action=request_proof`, {
-    method: "POST",
-    body: JSON.stringify({ order_id: orderId }),
-    headers: { "Content-Type": "text/plain" }
-  });
-  alert("Email inviata!");
-}
-
-window.addEventListener("DOMContentLoaded", loadPendingOrders);
-</script>
-
-<!-- Inserisci config.js se non è già caricato globalmente -->
-<script src="config.js"></script>
-
+    loadOrders();
+  </script>
 </body>
 </html>
