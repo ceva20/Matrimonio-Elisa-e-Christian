@@ -2,115 +2,71 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>Admin - Lista Nozze</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Lista Nozze</title>
   <style>
     body {
-      font-family: system-ui, sans-serif;
-      background: #f5f5f5;
-      padding: 20px;
+      font-family: sans-serif;
+      background: white;
+      color: #333;
+      padding: 40px;
+      max-width: 900px;
+      margin: auto;
     }
     h1 {
       font-size: 24px;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
-    .order {
-      background: #fff;
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 20px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 40px;
     }
-    .order h2 {
-      margin: 0 0 8px 0;
-      font-size: 18px;
-    }
-    .order p {
-      margin: 4px 0;
+    th, td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
       font-size: 14px;
     }
-    .order .buttons {
-      margin-top: 12px;
+    th {
+      background: #f7f7f7;
     }
-    .order button {
+    button {
       padding: 6px 10px;
-      margin-right: 6px;
-      border: none;
-      border-radius: 6px;
+      margin-right: 4px;
+      border: 1px solid #ccc;
+      background: #fafafa;
       cursor: pointer;
       font-size: 13px;
     }
-    .confirm {
-      background: #42b983;
-      color: white;
+    button:hover {
+      background: #f0f0f0;
     }
-    .request {
-      background: #f39c12;
-      color: white;
+    .tag {
+      display: inline-block;
+      font-size: 12px;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: #eee;
+      margin-left: 4px;
     }
   </style>
 </head>
 <body>
-  <h1>Ordini in attesa di conferma</h1>
-  <div id="orders"></div>
-
-  <script src="config.js"></script>
-  <script>
-    const API = window.WEDDING_CONFIG.API_URL;
-
-    async function loadOrders() {
-      const res = await fetch(API + "?action=pending&t=" + Date.now(), { cache: "no-store" });
-      const json = await res.json();
-      if (!json.ok) {
-        alert("Errore nel caricamento degli ordini.");
-        return;
-      }
-
-      const container = document.getElementById("orders");
-      container.innerHTML = "";
-
-      json.orders.forEach(ord => {
-        const div = document.createElement("div");
-        div.className = "order";
-
-        const esperienze = ord.cart.map(e => `${e.qty}× ${e.item_id}`).join(", ");
-
-        div.innerHTML = `
-          <h2>${ord.nome}</h2>
-          <p><strong>Email:</strong> ${ord.email}</p>
-          <p><strong>Data:</strong> ${ord.ts || "?"}</p>
-          <p><strong>Causale:</strong> ${ord.causale}</p>
-          <p><strong>Totale:</strong> € ${ord.totale}</p>
-          <p><strong>Esperienze:</strong> ${esperienze}</p>
-          <p><strong>Partecipanti:</strong> ${ord.participants?.join(", ") || "-"}</p>
-          <p><strong>Note:</strong> ${ord.note || "-"}</p>
-          <div class="buttons">
-            <button class="confirm" onclick="confirmOrder('${ord.order_id}', this)">Conferma bonifico</button>
-            <button class="request">Chiedi contabile</button>
-          </div>
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    async function confirmOrder(order_id, btn) {
-      if (!confirm("Confermare questo ordine come PAGATO?")) return;
-      btn.disabled = true;
-      const res = await fetch(API + "?action=confirm", {
-        method: "POST",
-        headers: { "Content-Type": "text/plain" },
-        body: JSON.stringify({ order_id })
-      });
-      const json = await res.json();
-      if (json.ok) {
-        btn.closest(".order").remove();
-      } else {
-        alert("Errore: " + (json.error || "generico"));
-        btn.disabled = false;
-      }
-    }
-
-    loadOrders();
-  </script>
+  <h1>Admin Lista Nozze</h1>
+  <table id="ordersTable">
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Nome</th>
+        <th>Email</th>
+        <th>Causale</th>
+        <th>Importo</th>
+        <th>Stato</th>
+        <th>Azioni</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <script src="admin.js"></script>
 </body>
 </html>
