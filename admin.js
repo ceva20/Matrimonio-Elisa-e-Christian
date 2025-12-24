@@ -11,11 +11,11 @@ async function loadOrders() {
   data.orders.forEach((o) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${o.timestamp}</td>
+      <td>${o.ts}</td>
       <td>${o.nome}</td>
       <td>${o.email}</td>
       <td>${o.causale}</td>
-      <td>€${o.importo}</td>
+      <td>€${o.totale}</td>
       <td><span class="tag">PENDING</span></td>
 
       <td>
