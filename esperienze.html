@@ -1071,7 +1071,7 @@ row.classList.add("cartRowAnimated");
 
 function showThanksToast(){
   const toast = document.createElement("div");
-  toast.textContent = "Grazie di cuore per il tuo regalo!💛 Non appena verrà confermato, riceverai una mail";
+  toast.textContent = "Grazie di cuore per il tuo regalo! 💛";
   toast.style.position = "fixed";
   toast.style.bottom = "24px";
   toast.style.left = "50%";
@@ -1093,30 +1093,13 @@ function showThanksToast(){
 
   function addParticipant() {
   const container = document.getElementById("participantsList");
-
-  const row = document.createElement("div");
-  row.style = "display:flex; gap:8px; align-items:center; margin-top:4px;";
-
   const input = document.createElement("input");
   input.type = "text";
   input.placeholder = "Nome e cognome";
   input.className = "participantInput";
-  input.style = "flex:1; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(138,111,47,.25); background: rgba(255,255,255,.9); font-family: Montserrat, sans-serif; font-size: 13px;";
-
-  const removeBtn = document.createElement("button");
-  removeBtn.type = "button";
-  removeBtn.innerHTML = "🗑";
-  removeBtn.title = "Rimuovi";
-  removeBtn.style = "background:transparent; border:0; cursor:pointer; font-size:16px; color:#a5483a;";
-  removeBtn.addEventListener("click", () => {
-    row.remove();
-  });
-
-  row.appendChild(input);
-  row.appendChild(removeBtn);
-  container.appendChild(row);
+  input.style = "margin-top:4px; width:100%; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(138,111,47,.25); background: rgba(255,255,255,.9); font-family: Montserrat, sans-serif; font-size: 13px;";
+  container.appendChild(input);
 }
-
 
 
   </script>
