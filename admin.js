@@ -1,5 +1,6 @@
 // ⚙️ CONFIG
-const API_URL = "https://script.google.com/macros/s/AKfycbxMaIMLjGLpGNeR-SCGV8UdmYJ0ywgkrQH9IBeAfbim0i_4Eo9_nMcU7nNYHS5vaBw1zQ/exec";
+const API_URL = window.WEDDING_CONFIG.API_URL;
+
 
 // 🟢 FETCH ORDERS
 async function loadOrders() {
