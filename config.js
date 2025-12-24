@@ -1,5 +1,5 @@
 window.WEDDING_CONFIG = {
-  API_URL: "https://script.google.com/macros/s/AKfycbyNKgNoHHorGhNSRcawgmEP_3uARf5BS82EniV3mHOSAMIDbOSQswcOhuEi52doQjg0kA/exec",
+  API_URL: "https://script.google.com/macros/s/AKfycbyBa5CVTz_PSA00XmrCRpdPaeDk2KHVe78HcAs4TPBmNKuJ6-HQSdewlEumWWI2YSlW1g/exec",
   PAY: {
     intestatario: "Christian Evangelista",
     iban: "IT40P0306939481100000002400",
