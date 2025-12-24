@@ -4,80 +4,107 @@
   <meta charset="UTF-8">
   <title>Admin Lista Nozze</title>
   <style>
-    body { font-family: sans-serif; padding: 40px; background: #fff7e7; color: #3a3326; }
-    h1 { font-size: 22px; margin-bottom: 20px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 16px; }
-    th, td { padding: 12px; border: 1px solid #ddd; font-size: 14px; }
-    th { background: #f0e3c8; text-align: left; }
-    button { padding: 6px 10px; margin-right: 6px; cursor: pointer; font-size: 13px; border-radius: 6px; }
-    .ok { background: #9abf3d; color: white; border: none; }
-    .warn { background: #ffc107; color: black; border: none; }
+    body {
+      font-family: system-ui, sans-serif;
+      padding: 40px;
+      background: #fff7e7;
+      color: #3a3326;
+    }
+    h1 {
+      font-size: 22px;
+      margin-bottom: 24px;
+    }
+    .order {
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 16px;
+      margin-bottom: 24px;
+      border-radius: 8px;
+      box-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+    }
+    .order h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+    .order p {
+      margin: 4px 0;
+      font-size: 14px;
+    }
+    button {
+      margin-top: 10px;
+      margin-right: 8px;
+      padding: 8px 12px;
+      font-size: 13px;
+      cursor: pointer;
+      border-radius: 6px;
+      border: none;
+    }
+    button.ok {
+      background-color: #9abf3d;
+      color: white;
+    }
+    button.warn {
+      background-color: #ffc107;
+      color: black;
+    }
   </style>
 </head>
 <body>
 
 <h1>Ordini in attesa di conferma</h1>
-<table id="orderTable">
-  <thead>
-    <tr>
-      <th>Data</th>
-      <th>Nome</th>
-      <th>Email</th>
-      <th>Partecipanti</th>
-      <th>Note</th>
-      <th>Causale</th>
-      <th>Azioni</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
+<div id="ordersList"></div>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/PASTE_WEBAPP_URL_HERE/exec';
+const API_URL = window.WEDDING_CONFIG?.API_URL || "https://script.google.com/macros/s/AKfycbxkPd1m-IimI1O2jPpY0VJK9yneiFpCFBlW2p7xqHiN/dev/exec";
 
-function loadPendingOrders() {
-  fetch(API_URL + '?action=pending&t=' + Date.now())
-    .then(res => res.json())
-    .then(data => {
-      const tbody = document.querySelector('#orderTable tbody');
-      tbody.innerHTML = '';
-      data.orders.forEach(ord => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${ord.data || ''}</td>
-          <td>${ord.nome || ''}</td>
-          <td>${ord.email || ''}</td>
-          <td>${(ord.participants || []).join(', ')}</td>
-          <td>${ord.note || ''}</td>
-          <td><code>${ord.causale || ''}</code></td>
-          <td>
-            <button class="ok" onclick="confirmOrder('${ord.order_id}')">✅ Conferma</button>
-            <button class="warn" onclick="requestProof('${ord.order_id}')">📎 Richiedi contabile</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    });
+async function loadPendingOrders() {
+  const res = await fetch(`${API_URL}?action=pending&t=${Date.now()}`);
+  const data = await res.json();
+
+  const list = document.getElementById("ordersList");
+  list.innerHTML = "";
+
+  data.orders.forEach(order => {
+    const div = document.createElement("div");
+    div.className = "order";
+
+    div.innerHTML = `
+      <h3>${order.nome} (${order.email})</h3>
+      <p><strong>Causale:</strong> <code>${order.causale}</code></p>
+      <p><strong>Partecipanti:</strong> ${Array.isArray(order.participants) ? order.participants.join(", ") : ""}</p>
+      <p><strong>Note:</strong> ${order.note || "—"}</p>
+      <p><strong>Totale:</strong> ${order.total_eur || "—"} €</p>
+      <button class="ok" onclick="confirmOrder('${order.order_id}')">✅ Conferma regalo</button>
+      <button class="warn" onclick="requestProof('${order.order_id}')">📩 Chiedi contabile</button>
+    `;
+
+    list.appendChild(div);
+  });
 }
 
-function confirmOrder(order_id) {
-  fetch(API_URL + '?action=confirm', {
-    method: 'POST',
-    body: JSON.stringify({ order_id }),
-    headers: { 'Content-Type': 'text/plain' }
-  }).then(() => loadPendingOrders());
+async function confirmOrder(orderId) {
+  await fetch(`${API_URL}?action=confirm`, {
+    method: "POST",
+    body: JSON.stringify({ order_id: orderId }),
+    headers: { "Content-Type": "text/plain" }
+  });
+  await loadPendingOrders();
 }
 
-function requestProof(order_id) {
-  fetch(API_URL + '?action=request_proof', {
-    method: 'POST',
-    body: JSON.stringify({ order_id }),
-    headers: { 'Content-Type': 'text/plain' }
-  }).then(() => alert("Richiesta contabile inviata"));
+async function requestProof(orderId) {
+  await fetch(`${API_URL}?action=request_proof`, {
+    method: "POST",
+    body: JSON.stringify({ order_id: orderId }),
+    headers: { "Content-Type": "text/plain" }
+  });
+  alert("Email inviata!");
 }
 
-loadPendingOrders();
+window.addEventListener("DOMContentLoaded", loadPendingOrders);
 </script>
+
+<!-- Inserisci config.js se non è già caricato globalmente -->
+<script src="config.js"></script>
 
 </body>
 </html>
