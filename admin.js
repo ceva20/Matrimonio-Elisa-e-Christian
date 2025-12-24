@@ -16,7 +16,8 @@ async function loadOrders() {
       <td>${o.email}</td>
       <td>${o.causale}</td>
       <td>€${o.importo}</td>
-      <td>${o.status}</td>
+      <td><span class="tag">PENDING</span></td>
+
       <td>
         <button onclick="confirmOrder('${o.order_id}')">✅ Conferma</button>
         <button onclick="cancelOrder('${o.order_id}')">🗑 Annulla</button>
